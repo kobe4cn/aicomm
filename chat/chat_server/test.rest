@@ -1,0 +1,177 @@
+### chat
+POST  http://localhost:8080/
+
+
+###  signup user
+POST  http://localhost:8081/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "kevin yang",
+  "email": "kevin.yang.xgz@gmail.com",
+  "password": "test123456"
+}
+
+###  signup user
+POST  http://localhost:8081/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "yanglei",
+  "email": "yanglei@gmail.com",
+  "password": "test123456"
+}
+
+###  signup user
+POST  http://localhost:8081/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "yanglei1",
+  "email": "yanglei1@gmail.com",
+  "password": "test123456"
+}
+###  signup user
+POST  http://localhost:8081/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "yanglei4",
+  "email": "yanglei4@gmail.com",
+  "password": "test123456"
+}
+###  signup user
+POST  http://localhost:8081/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "yanglei5",
+  "email": "yanglei5@gmail.com",
+  "password": "test123456"
+}
+###  signup user
+POST  http://localhost:8081/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "leilei",
+  "email": "leilei@gmail.com",
+  "password": "test123456"
+}
+
+### signin user
+# @name signin
+POST  http://localhost:8081/api/signin
+Content-Type: application/json
+
+{
+  "email": "kevin.yang@lianwei.com.cn",
+  "password": "test123456"
+}
+
+
+### signin user
+# @name signin
+POST  http://localhost:8081/api/signin
+Content-Type: application/json
+
+{
+  "email": "kevin.yang.xgz@gmail.com",
+  "password": "test123456"
+}
+@token={{signin.response.body.token}}
+
+
+### get chat list
+GET  http://localhost:8080/api/chats
+Authorization: Bearer {{token}}
+
+### create chat
+POST  http://localhost:8080/api/chats
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "test chat1",
+  "members": [1,2,7],
+  "public": false
+}
+### create chat
+POST  http://localhost:8080/api/chats
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "test chat3",
+  "members": [1,2],
+  "public": false
+}
+
+### delete chat 3
+DELETE  http://localhost:8080/api/chats/3
+Authorization: Bearer {{token}}
+
+### update chat
+PATCH   http://localhost:8080/api/chats/4
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "public chat",
+  "members": [1,2,7],
+  "public": true
+}
+
+### get chat
+GET  http://localhost:8080/api/chats/2
+Authorization : Bearer {{ token }}
+
+
+
+### get  user list
+GET  http://localhost:8080/api/users
+Authorization: Bearer {{token}}
+
+
+### upload files
+POST  http://localhost:8080/api/upload
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MfnBoundary
+
+--MfnBoundary
+Content-Disposition: form-data;filename="actor.jpg"
+Content-Type: application/octet-stream
+
+< /Users/kevin.yang/Downloads/actor.jpg
+--MfnBoundary
+Content-Disposition: form-data;filename="hello.txt"
+
+Hello,World!
+--MfnBoundary--
+
+
+### get files
+GET  http://localhost:8080/api/files/1/0fd/a3e/ed0040e14b47bec49a71f08097b325950d.jpg
+Authorization : Bearer {{ token }}
+
+
+###send a message
+POST  http://localhost:8080/api/chats/4
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content": "hello,lei yang",
+  "files": []
+}
+
+
+### get messages
+GET  http://localhost:8080/api/chats/2/messages?page_size=2
+Authorization : Bearer {{ token }}

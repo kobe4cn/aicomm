@@ -1,0 +1,22 @@
+[package]
+name = "core_lib"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+
+[dependencies]
+chrono = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+sqlx = { workspace = true }
+jwt-simple = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+axum = { workspace = true }
+axum-extra = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+tracing = { workspace = true }
+uuid = { version = "1.10.0", features = ["v8", "serde"] }
+utoipa = { version = "5.1.2", features = ["axum_extras", "chrono"] }
