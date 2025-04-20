@@ -5,10 +5,6 @@ default_stages: [commit, push]
 default_language_version:
   rust: system
 
-vars:
-  rust_dirs: &rust_dirs
-    - chat
-    - chatapp/src-tauri
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

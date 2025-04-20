@@ -47,6 +47,15 @@ jobs:
           submodules: recursive
       - name: Install Rust
         run: rustup toolchain install stable --component llvm-tools-preview
+      - name: Install system dependencies for Tauri
+        run: sudo apt-get update && sudo apt-get install -y \
+          libgtk-3-dev \
+          libglib2.0-dev \
+          libwebkit2gtk-4.0-dev \
+          build-essential \
+          pkg-config \
+          libssl-dev \
+          curl
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
       - name: install nextest
