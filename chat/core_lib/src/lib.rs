@@ -1,11 +1,13 @@
+use axum::async_trait;
 use chrono::{DateTime, Utc};
 mod middlewares;
 mod utils;
+use jwt_simple::reexports::thiserror;
 pub use middlewares::*;
-pub use utils::{DecodingKey, EncodingKey};
-
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+pub use thiserror::Error;
+pub use utils::{DecodingKey, EncodingKey};
 use utoipa::ToSchema;
 #[derive(Debug, Clone, FromRow, Deserialize, Serialize, PartialEq, ToSchema)]
 pub struct User {
@@ -33,6 +35,28 @@ pub struct WorkSpace {
     pub owner_id: i64,
     pub created_at: DateTime<Utc>,
 }
+#[async_trait]
+pub trait Agent {
+    async fn process(&self, msg: Message, ctx: &AgentContext) -> Result<AgentDecision, AgentError>;
+}
+
+#[derive(Debug, Clone)]
+pub struct AgentContext {}
+
+pub enum AgentDecision {
+    Modify(String),
+    Reply(String),
+    Delete,
+    None,
+}
+
+#[derive(Debug, Clone, Error)]
+pub enum AgentError {
+    #[error("Agent not found")]
+    NotFound,
+    #[error("Agent error: {0}")]
+    Error(String),
+}
 
 #[derive(Debug, Clone, Deserialize, Serialize, FromRow, ToSchema)]
 pub struct Chat {
@@ -41,6 +65,9 @@ pub struct Chat {
     pub name: Option<String>,
     pub r#type: ChatType,
     pub members: Vec<i64>,
+    #[sqlx(skip)]
+    pub agents: Vec<i64>,
+    #[serde(alias = "createdAt")]
     pub created_at: DateTime<Utc>,
 }
 
@@ -60,6 +87,7 @@ pub struct Message {
     pub chat_id: i64,
     pub sender_id: i64,
     pub content: String,
+    pub modified_content: Option<String>,
     pub files: Vec<String>,
     pub created_at: DateTime<Utc>,
 }

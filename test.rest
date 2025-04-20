@@ -89,21 +89,21 @@ Content-Type: application/json
 
 
 ### get chat list
-GET  http://localhost:8080/api/chats
+GET  http://localhost:8081/api/chats
 Authorization: Bearer {{token}}
 
 ### create chat
-POST  http://localhost:8080/api/chats
+POST  http://localhost:8081/api/chats
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
   "name": "test chat1",
-  "members": [1,2,7],
+  "members": [1,2],
   "public": false
 }
 ### create chat
-POST  http://localhost:8080/api/chats
+POST  http://localhost:8081/api/chats
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -114,11 +114,11 @@ Content-Type: application/json
 }
 
 ### delete chat 3
-DELETE  http://localhost:8080/api/chats/3
+DELETE  http://localhost:8081/api/chats/3
 Authorization: Bearer {{token}}
 
 ### update chat
-PATCH   http://localhost:8080/api/chats/4
+PATCH   http://localhost:8081/api/chats/4
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -129,18 +129,18 @@ Content-Type: application/json
 }
 
 ### get chat
-GET  http://localhost:8080/api/chats/2
+GET  http://localhost:8081/api/chats/2
 Authorization : Bearer {{ token }}
 
 
 
 ### get  user list
-GET  http://localhost:8080/api/users
+GET  http://localhost:8081/api/users
 Authorization: Bearer {{token}}
 
 
 ### upload files
-POST  http://localhost:8080/api/upload
+POST  http://localhost:8081/api/upload
 Authorization: Bearer {{token}}
 Content-Type: multipart/form-data; boundary=MfnBoundary
 
@@ -157,12 +157,12 @@ Hello,World!
 
 
 ### get files
-GET  http://localhost:8080/api/files/1/0fd/a3e/ed0040e14b47bec49a71f08097b325950d.jpg
+GET  http://localhost:8081/api/files/1/0fd/a3e/ed0040e14b47bec49a71f08097b325950d.jpg
 Authorization : Bearer {{ token }}
 
 
 ###send a message
-POST  http://localhost:8080/api/chats/4
+POST  http://localhost:8081/api/chats/4
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -173,5 +173,5 @@ Content-Type: application/json
 
 
 ### get messages
-GET  http://localhost:8080/api/chats/2/messages?page_size=2
+GET  http://localhost:8081/api/chats/2/messages?page_size=2
 Authorization : Bearer {{ token }}
