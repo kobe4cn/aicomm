@@ -32,3 +32,7 @@ VALUES(1, 'general', 'public_channel', '{ 1, 2, 3 }'),
 INSERT INTO chats(ws_id, type, members)
 VALUES(1, 'single', '{ 1, 2 }'),
     (1, 'group', '{ 1, 2, 3 }');
+
+--insert agent to chat
+INSERT INTO chat_agents(chat_id, name, type, prompt, args)
+VALUES(1, 'translation', 'proxy', 'If language is Chinese, translate it to English, if language is English, translate it to Chinese.Please reply the translated content directly, do not add any other text. Here is the content: ', '{}');

@@ -101,6 +101,7 @@ allow = [
     "Unlicense",
     "BSD-2-Clause",
     "BSL-1.0",
+    "Zlib",
 
 
 

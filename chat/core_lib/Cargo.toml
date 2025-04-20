@@ -20,3 +20,4 @@ tower-http = { workspace = true }
 tracing = { workspace = true }
 uuid = { version = "1.10.0", features = ["v8", "serde"] }
 utoipa = { version = "5.1.2", features = ["axum_extras", "chrono"] }
+serde_json = { workspace = true }

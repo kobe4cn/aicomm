@@ -92,6 +92,44 @@ pub struct Message {
     pub created_at: DateTime<Utc>,
 }
 
+/*
+CREATE TABLE IF NOT EXISTS chat_agents (
+    id BIGSERIAL PRIMARY KEY,
+    chat_id BIGINT NOT NULL,
+    name TEXT NOT NULL,
+    type agent_type NOT NULL DEFAULT 'reply',
+    prompt TEXT NOT NULL,
+    args JSONB NOT NULL DEFAULT '{}',
+    created_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamptz DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (chat_id, agent_id)
+);
+*/
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, sqlx::Type, PartialOrd, ToSchema)]
+#[sqlx(type_name = "agent_type", rename_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
+pub enum AgentType {
+    #[serde(alias = "proxy", alias = "Proxy")]
+    Proxy,
+    #[serde(alias = "reply", alias = "Reply")]
+    Reply,
+    #[serde(alias = "tap", alias = "Tap")]
+    Tap,
+}
+#[derive(Debug, Clone, Deserialize, Serialize, FromRow, PartialEq)]
+#[serde(rename_all(serialize = "camelCase"))]
+pub struct ChatAgents {
+    pub id: i64,
+    pub chat_id: i64,
+    pub name: String,
+    pub r#type: AgentType,
+    pub prompt: String,
+    pub args: sqlx::types::Json<serde_json::Value>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
 #[cfg(test)]
 impl User {
     pub fn new(id: i64, fullname: &str, email: &str) -> Self {
