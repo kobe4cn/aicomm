@@ -31,7 +31,7 @@
             }
 
             // Initialize a new EventSource connection with the entered token
-            source = new EventSource(`/events?access_token=${token}`);
+            source = new EventSource(`/events?token=${token}`);
 
             // Set up the event listeners
             source.onmessage = function(event) {

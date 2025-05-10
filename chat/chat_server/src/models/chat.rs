@@ -166,8 +166,10 @@ mod tests {
     use anyhow::Result;
 
     use anyhow::Ok;
+    use core_lib::ChatType;
 
-    use super::*;
+    use crate::models::CreateChat;
+    use crate::AppState;
 
     #[tokio::test]
     async fn test_create_chat() -> Result<()> {

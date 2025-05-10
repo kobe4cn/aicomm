@@ -4,7 +4,7 @@
 ALTER TABLE chats ADD COLUMN agents BIGINT[] NOT NULL DEFAULT '{}';
 
 --modify message table to add modified_content column
-ALTER TABLE messages ADD COLUMN modified_content TEXT;
+ALTER TABLE messages ADD COLUMN modified_content TEXT DEFAULT NULL;
 
 --add agent_type type
 CREATE TYPE agent_type AS ENUM ('proxy', 'reply', 'tap');

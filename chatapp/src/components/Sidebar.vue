@@ -67,9 +67,14 @@ export default {
     toggleDropdown() {
       this.dropdownVisible = !this.dropdownVisible;
     },
-    logout() {
+    async logout() {
+      const from = `/chats/${this.activeChannelId}`;
+      const to = '/logout';
+
+      this.$store.dispatch('navigation', { from, to });
+      this.$store.dispatch('userLogout');
       this.$store.dispatch('logout');
-      this.$router.push('/login');
+      await this.$router.push('/login');
     },
     handleOutsideClick(event) {
       if (!this.$el.contains(event.target)) {
@@ -84,6 +89,10 @@ export default {
       this.$store.dispatch('addChannel', newChannel);
     },
     selectChannel(channelId) {
+      const from = `/chats/${this.activeChannelId}`;
+      const to = `/chats/${channelId}`;
+
+      this.$store.dispatch('navigation', { from, to });
       this.$store.dispatch('setActiveChannel', channelId);
     },
   },

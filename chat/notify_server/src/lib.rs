@@ -4,6 +4,7 @@ mod error;
 mod notify;
 
 use axum::{
+    http::Method,
     middleware::from_fn_with_state,
     response::{Html, IntoResponse},
     routing::get,
@@ -20,6 +21,7 @@ use notify::AppEvent;
 
 use sse::sse_handler;
 use tokio::sync::broadcast;
+use tower_http::cors::{self, CorsLayer};
 
 #[derive(Clone)]
 pub struct AppState(Arc<AppStateInner>);
@@ -52,12 +54,23 @@ impl AppState {
 
 const INDEX_HTML: &str = include_str!("../index.html");
 pub async fn get_router(config: AppConfig) -> anyhow::Result<Router> {
+    let cors = CorsLayer::new()
+        .allow_origin(cors::Any)
+        .allow_methods([
+            Method::GET,
+            Method::POST,
+            Method::PATCH,
+            Method::DELETE,
+            Method::PUT,
+        ])
+        .allow_headers(cors::Any);
     let state = AppState::try_new(config).expect("app state init failed");
     setup_pg_listener(state.clone()).await?;
     let router = Router::new()
         .route("/events", get(sse_handler))
         .layer(from_fn_with_state(state.clone(), verify_token::<AppState>))
         .route("/", get(index_handler))
+        .layer(cors)
         .with_state(state);
     Ok(router)
 }

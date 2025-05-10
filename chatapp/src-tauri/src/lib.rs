@@ -170,7 +170,7 @@ fn setup_menu<R: Runtime>(app: &AppHandle<R>) -> Result<(), tauri::Error> {
         .tooltip("Hacker News")
         .icon(icon)
         .menu(&tray_menu)
-        .menu_on_left_click(true)
+        .show_menu_on_left_click(true)
         .on_tray_icon_event(|tray, event| {
             // info!("Tray icon event: {:?}", event);
             if let TrayIconEvent::Click {

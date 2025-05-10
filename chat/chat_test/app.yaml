@@ -1,7 +1,7 @@
 server:
   port: 8080
   host: 0.0.0.0
-  db_url: postgres://postgres:postgres@localhost:5432/chat
+  db_url: postgresql://postgres:pnnnfd86@dbprovider.us-east-1.clawcloudrun.com:37389/chat
   base_dir: /Users/kevin.yang/Downloads/chat_server
 auth:
   sk: |

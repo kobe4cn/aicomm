@@ -1,9 +1,9 @@
 ### chat
-POST  http://localhost:8080/
+POST  http://localhost:6688/
 
 
 ###  signup user
-POST  http://localhost:8081/api/signup
+POST  http://localhost:6688/api/signup
 Content-Type: application/json
 
 {
@@ -12,9 +12,19 @@ Content-Type: application/json
   "email": "kevin.yang.xgz@gmail.com",
   "password": "test123456"
 }
+###  signup user
+POST  http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "kevin yang",
+  "email": "kevin.yang@lianwei.com.cn",
+  "password": "test123456"
+}
 
 ###  signup user
-POST  http://localhost:8081/api/signup
+POST  http://localhost:6688/api/signup
 Content-Type: application/json
 
 {
@@ -25,7 +35,7 @@ Content-Type: application/json
 }
 
 ###  signup user
-POST  http://localhost:8081/api/signup
+POST  http://localhost:6688/api/signup
 Content-Type: application/json
 
 {
@@ -35,7 +45,7 @@ Content-Type: application/json
   "password": "test123456"
 }
 ###  signup user
-POST  http://localhost:8081/api/signup
+POST  http://localhost:6688/api/signup
 Content-Type: application/json
 
 {
@@ -45,7 +55,7 @@ Content-Type: application/json
   "password": "test123456"
 }
 ###  signup user
-POST  http://localhost:8081/api/signup
+POST  http://localhost:6688/api/signup
 Content-Type: application/json
 
 {
@@ -55,7 +65,7 @@ Content-Type: application/json
   "password": "test123456"
 }
 ###  signup user
-POST  http://localhost:8081/api/signup
+POST  http://localhost:6688/api/signup
 Content-Type: application/json
 
 {
@@ -67,7 +77,7 @@ Content-Type: application/json
 
 ### signin user
 # @name signin
-POST  http://localhost:8081/api/signin
+POST  http://localhost:6688/api/signin
 Content-Type: application/json
 
 {
@@ -78,7 +88,7 @@ Content-Type: application/json
 
 ### signin user
 # @name signin
-POST  http://localhost:8081/api/signin
+POST  http://localhost:6688/api/signin
 Content-Type: application/json
 
 {
@@ -89,11 +99,11 @@ Content-Type: application/json
 
 
 ### get chat list
-GET  http://localhost:8081/api/chats
+GET  http://localhost:6688/api/chats
 Authorization: Bearer {{token}}
 
 ### create chat
-POST  http://localhost:8081/api/chats
+POST  http://localhost:6688/api/chats
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -103,7 +113,7 @@ Content-Type: application/json
   "public": false
 }
 ### create chat
-POST  http://localhost:8081/api/chats
+POST  http://localhost:6688/api/chats
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -114,33 +124,33 @@ Content-Type: application/json
 }
 
 ### delete chat 3
-DELETE  http://localhost:8081/api/chats/3
+DELETE  http://localhost:6688/api/chats/3
 Authorization: Bearer {{token}}
 
 ### update chat
-PATCH   http://localhost:8081/api/chats/4
+PATCH   http://localhost:6688/api/chats/2
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
   "name": "public chat",
-  "members": [1,2,7],
+  "members": [1,2,6],
   "public": true
 }
 
 ### get chat
-GET  http://localhost:8081/api/chats/2
+GET  http://localhost:6688/api/chats/2
 Authorization : Bearer {{ token }}
 
 
 
 ### get  user list
-GET  http://localhost:8081/api/users
+GET  http://localhost:6688/api/users
 Authorization: Bearer {{token}}
 
 
 ### upload files
-POST  http://localhost:8081/api/upload
+POST  http://localhost:6688/api/upload
 Authorization: Bearer {{token}}
 Content-Type: multipart/form-data; boundary=MfnBoundary
 
@@ -157,12 +167,12 @@ Hello,World!
 
 
 ### get files
-GET  http://localhost:8081/api/files/1/0fd/a3e/ed0040e14b47bec49a71f08097b325950d.jpg
+GET  http://localhost:6688/api/files/1/0fd/a3e/ed0040e14b47bec49a71f08097b325950d.jpg
 Authorization : Bearer {{ token }}
 
 
 ###send a message
-POST  http://localhost:8081/api/chats/4
+POST  http://localhost:6688/api/chats/2
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -172,6 +182,72 @@ Content-Type: application/json
 }
 
 
-### get messages
-GET  http://localhost:8081/api/chats/2/messages?page_size=2
+
+GET  http://localhost:6688/api/chats/2/messages?page_size=1
 Authorization : Bearer {{ token }}
+
+### get messages
+GET http://localhost:6688/api/chats/2/messages
+Authorization : Bearer {{ token }}
+
+
+### create agent
+POST  http://localhost:6688/api/chats/2/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "translator2",
+  "type": "proxy",
+  "prompt": "You're the world's best translator,You understand English and Chinese well, also their culture and history.\nIf the original text is English, you will translate it to elegant, authentic Simplified Chinese.\nIf the original text is Chinese, you will translate it to elegant, authentic English.\nOnly return the translated sentences, no other text or comments. belows are the text to translate:\n",
+  "args": {
+    "model": "gpt-4o"
+  },
+  "adapter": "ollama",
+  "model": "llama3.2"
+}
+
+
+### update agent
+PATCH  http://localhost:6688/api/chats/2/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": 6,
+  "prompt": "You're the world's best translator,You understand English and Chinese well, also their culture and history.
+  If the original text is English, you will translate it to elegant, authentic Simplified Chinese.
+  If the original text is Chinese, you will translate it to elegant, authentic English.
+  Only return the translated sentences, no other text or comments. belows are the text to translate:",
+  "args": {
+    "model": "gpt-4o"
+  }
+}
+
+
+### list chat agents
+GET  http://localhost:6688/api/chats/2/agents
+Authorization: Bearer {{token}}
+
+
+
+###send chinese message
+POST  http://localhost:6688/api/chats/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content": "你好，今天工作辛苦了",
+  "files": []
+}
+
+
+###send english message
+POST  http://localhost:6688/api/chats/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content": "Well great, you made great progress today",
+  "files": []
+}

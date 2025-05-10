@@ -15,7 +15,7 @@ use tracing::warn;
 
 #[derive(Debug, Deserialize)]
 pub struct Params {
-    access_token: String,
+    token: String,
 }
 // use crate::utils::{DecodingKey, EncodingKey};
 
@@ -26,29 +26,27 @@ where
     T: TokenVerify + Clone + Send + Sync + 'static,
 {
     let (mut parts, body) = req.into_parts();
-    let token = match TypedHeader::<Authorization<Bearer>>::from_request_parts(&mut parts, &state)
-        .await
-    {
-        Ok(TypedHeader(Authorization(bearer))) => bearer.token().to_string(),
+    let token =
+        match TypedHeader::<Authorization<Bearer>>::from_request_parts(&mut parts, &state).await {
+            Ok(TypedHeader(Authorization(bearer))) => bearer.token().to_string(),
 
-        Err(e) => {
-            if e.is_missing() {
-                let params = match Query::<Params>::from_request_parts(&mut parts, &state).await {
-                    Ok(Query(params)) => params,
-                    Err(e) => {
-                        let msg = format!("parse query params failed: {:?}", e);
-                        warn!(msg);
-                        return (StatusCode::BAD_REQUEST, msg).into_response();
+            Err(e) => {
+                if e.is_missing() {
+                    match Query::<Params>::from_request_parts(&mut parts, &state).await {
+                        Ok(params) => params.token.clone(),
+                        Err(e) => {
+                            let msg = format!("parse query params failed: {:?}", e);
+                            warn!(msg);
+                            return (StatusCode::BAD_REQUEST, msg).into_response();
+                        }
                     }
-                };
-                params.access_token
-            } else {
-                let msg = format!("verify token failed: {:?}", e);
-                warn!(msg);
-                return (StatusCode::FORBIDDEN, msg).into_response();
+                } else {
+                    let msg = format!("verify token failed: {:?}", e);
+                    warn!(msg);
+                    return (StatusCode::FORBIDDEN, msg).into_response();
+                }
             }
-        }
-    };
+        };
 
     match state.verify(&token) {
         Ok(user) => {

@@ -5,11 +5,14 @@ use utoipa::{
     Modify, OpenApi,
 };
 
-use crate::AppState;
 use crate::{
     handlers::*,
     models::{CreateChat, CreateUser, SigninUser},
     ErrorOutput,
+};
+use crate::{
+    models::{CreateAgent, UpdateAgent},
+    AppState,
 };
 use utoipa_rapidoc::RapiDoc;
 use utoipa_redoc::{Redoc, Servable};
@@ -28,8 +31,12 @@ pub(crate) trait OpenApiRouter {
         create_chat_handler,
         get_chat_handler,
         list_messages_handler,
+        list_agents_handler,
+        create_agent_handler,
+        update_agent_handler,
+
     ),
-        components(schemas( User,Chat,ChatType,ChatUser,Message,WorkSpace,SigninUser,CreateUser,CreateChat,AuthOutput,ErrorOutput)),
+        components(schemas( User,Chat,ChatType,ChatUser,Message,WorkSpace,SigninUser,CreateUser,CreateChat,AuthOutput,ErrorOutput,CreateAgent,UpdateAgent)),
         modifiers(&SecurityAddon),
         tags(
             (name = "todo", description = "Todo items management API")

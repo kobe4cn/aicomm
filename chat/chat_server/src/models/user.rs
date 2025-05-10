@@ -8,6 +8,7 @@ use argon2::{
 use serde::{Deserialize, Serialize};
 
 use core_lib::{ChatUser, User};
+use tracing::info;
 use utoipa::ToSchema;
 
 #[derive(Debug, Clone, Deserialize, ToSchema, Serialize)]
@@ -79,12 +80,15 @@ impl AppState {
     }
     ///verify email and password
     pub async fn verify_user(&self, input: &SigninUser) -> Result<Option<User>, AppError> {
+        info!("input: {:?}", input);
+
         let user: Option<User> = sqlx::query_as(
             r#"SELECT id,ws_id,fullname,email,password_hash,created_at FROM users WHERE email=$1"#,
         )
         .bind(&input.email)
         .fetch_optional(&self.pool)
         .await?;
+        info!("user: {:?}", user);
         match user {
             Some(mut user) => {
                 let password_hash = mem::take(&mut user.password_hash);

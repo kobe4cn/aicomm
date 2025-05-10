@@ -43,6 +43,14 @@ pub enum AppError {
     MessageCreateError(String),
     #[error("Chat file error {0}")]
     ChatFileError(String),
+    #[error("user not in chat {0}")]
+    UserNotInChat(String),
+    #[error("create agent error {0}")]
+    CreateAgentError(String),
+    #[error("agent exists {0}")]
+    AgentExists(String),
+    #[error(" {0}")]
+    AgentError(#[from] core_lib::AgentError),
 }
 
 impl ErrorOutput {
@@ -69,6 +77,10 @@ impl IntoResponse for AppError {
             AppError::HttpHeaderError(_) => axum::http::StatusCode::UNAUTHORIZED,
             AppError::EmailAlreadyExists(_) => axum::http::StatusCode::CONFLICT,
             AppError::WorkSpaceNotExists(_) => axum::http::StatusCode::NOT_FOUND,
+            AppError::UserNotInChat(_) => axum::http::StatusCode::FORBIDDEN,
+            AppError::CreateAgentError(_) => axum::http::StatusCode::BAD_REQUEST,
+            AppError::AgentExists(_) => axum::http::StatusCode::CONFLICT,
+            AppError::AgentError(_) => axum::http::StatusCode::BAD_REQUEST,
         };
         (status_code, Json(ErrorOutput::new(self.to_string()))).into_response()
     }

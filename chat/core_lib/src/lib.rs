@@ -1,4 +1,3 @@
-use axum::async_trait;
 use chrono::{DateTime, Utc};
 mod middlewares;
 mod utils;
@@ -35,14 +34,30 @@ pub struct WorkSpace {
     pub owner_id: i64,
     pub created_at: DateTime<Utc>,
 }
-#[async_trait]
+
+#[allow(async_fn_in_trait)]
 pub trait Agent {
-    async fn process(&self, msg: Message, ctx: &AgentContext) -> Result<AgentDecision, AgentError>;
+    async fn process(&self, msg: &str, ctx: &AgentContext) -> Result<AgentDecision, AgentError>;
 }
 
 #[derive(Debug, Clone)]
-pub struct AgentContext {}
+pub struct AgentContext {
+    pub chat_id: i64,
+    pub user_id: i64,
+    pub workspace_id: i64,
+}
 
+impl AgentContext {
+    pub fn new(chat_id: i64, user_id: i64, workspace_id: i64) -> Self {
+        Self {
+            chat_id,
+            user_id,
+            workspace_id,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub enum AgentDecision {
     Modify(String),
     Reply(String),
@@ -50,12 +65,16 @@ pub enum AgentDecision {
     None,
 }
 
-#[derive(Debug, Clone, Error)]
+#[derive(Debug, Error)]
 pub enum AgentError {
     #[error("Agent not found")]
     NotFound,
     #[error("Agent error: {0}")]
     Error(String),
+    #[error("Agent complete error: {0}")]
+    CompleteError(String),
+    #[error("{0}")]
+    AnyError(#[from] anyhow::Error),
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, FromRow, ToSchema)]
@@ -71,10 +90,13 @@ pub struct Chat {
     pub created_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, sqlx::Type, PartialOrd, ToSchema)]
+#[derive(
+    Debug, Clone, Default, Deserialize, Serialize, PartialEq, sqlx::Type, PartialOrd, ToSchema,
+)]
 #[sqlx(type_name = "chat_type", rename_all = "snake_case")]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all(serialize = "camelCase"))]
 pub enum ChatType {
+    #[default]
     Single,
     Group,
     PrivateChannel,
@@ -106,27 +128,49 @@ CREATE TABLE IF NOT EXISTS chat_agents (
 );
 */
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, sqlx::Type, PartialOrd, ToSchema)]
+#[derive(
+    Debug, Clone, Default, Deserialize, Serialize, PartialEq, sqlx::Type, PartialOrd, ToSchema,
+)]
 #[sqlx(type_name = "agent_type", rename_all = "snake_case")]
 #[serde(rename_all = "snake_case")]
 pub enum AgentType {
     #[serde(alias = "proxy", alias = "Proxy")]
+    #[default]
     Proxy,
     #[serde(alias = "reply", alias = "Reply")]
     Reply,
     #[serde(alias = "tap", alias = "Tap")]
     Tap,
 }
-#[derive(Debug, Clone, Deserialize, Serialize, FromRow, PartialEq)]
+
+#[derive(
+    Debug, Clone, Default, Deserialize, Serialize, PartialEq, sqlx::Type, PartialOrd, ToSchema,
+)]
+#[sqlx(type_name = "adapter_type", rename_all = "snake_case")]
+#[serde(rename_all = "snake_case")]
+pub enum AdapterType {
+    #[serde(alias = "openai", alias = "OpenAI")]
+    Openai,
+    #[serde(alias = "ollama", alias = "Ollama")]
+    #[default]
+    Ollama,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, FromRow, PartialEq, ToSchema)]
 #[serde(rename_all(serialize = "camelCase"))]
 pub struct ChatAgents {
     pub id: i64,
+    #[serde(alias = "chatId")]
     pub chat_id: i64,
     pub name: String,
     pub r#type: AgentType,
     pub prompt: String,
-    pub args: sqlx::types::Json<serde_json::Value>,
+    pub adapter: AdapterType,
+    pub model: String,
+    pub args: serde_json::Value,
+    #[serde(alias = "createdAt")]
     pub created_at: DateTime<Utc>,
+    #[serde(alias = "updatedAt")]
     pub updated_at: DateTime<Utc>,
 }
 
