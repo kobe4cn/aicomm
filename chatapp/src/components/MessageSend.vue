@@ -92,8 +92,10 @@ export default {
 
       try {
         this.$store.dispatch('sendMessage', payload);
+        // this.$store.dispatch('fetchMessagesForChannel', this.activeChannelId);
         this.message = ''; // Clear the input after sending
         this.files = []; // Clear the files after sending
+
       } catch (error) {
         console.error('Failed to send message:', error);
       }

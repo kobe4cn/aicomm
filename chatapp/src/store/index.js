@@ -201,7 +201,7 @@ export default createStore({
       localStorage.setItem('messages', JSON.stringify(this.state.messages));
     },
     async fetchMessagesForChannel({ state, commit }, channelId) {
-      if (!state.messages[channelId] || state.messages[channelId].length === 0) {
+      // if (!state.messages[channelId] || state.messages[channelId].length === 0) {
         try {
           const response = await network(this, 'get', `/chats/${channelId}/messages`, null, {
             Authorization: `Bearer ${state.token}`,
@@ -211,7 +211,7 @@ export default createStore({
         } catch (error) {
           console.error(`Failed to fetch messages for channel ${channelId}:`, error);
         }
-      }
+      // }
     },
     async uploadFiles({ state, commit }, files) {
       try {
@@ -242,6 +242,8 @@ export default createStore({
           Authorization: `Bearer ${state.token}`,
         });
         console.log('Message sent:', response.data);
+
+        await this.dispatch('fetchMessagesForChannel', payload.chatId);
       } catch (error) {
         console.error('Failed to send message:', error);
         throw error;

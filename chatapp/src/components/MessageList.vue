@@ -91,11 +91,12 @@ export default {
       if (!this.$store.state.user) {
         return '';
       }
-      if (message.senderId === this.$store.state.user.id) {
+      // alert(message.modified_content)
+      if (message.sender_id === this.$store.state.user.id) {
         return message.content;
       } else {
-        return message.modifiedContent && message.modifiedContent.trim() !== ''
-          ? message.modifiedContent
+        return message.modified_content && message.modified_content.trim() !== ''
+          ? message.modified_content
           : message.content;
       }
     }
