@@ -44,6 +44,11 @@ impl Agent for ProxyAgent {
 }
 impl Agent for ReplyAgent {
     async fn process(&self, msg: &str, _ctx: &AgentContext) -> Result<AgentDecision, AgentError> {
+        //1. create embedding for the message
+        //2. search the embedding in the database
+        //3. query llm with prompt and related docs as context
+        //4. create embedding for the response
+        //5. save the embedding and its relation to the message
         let msg = format!("{} {}", self.prompt, msg);
         let messages = vec![ai_sdk::Message::user(msg.clone())];
         let response = self.adapter.complete(&messages).await?;
