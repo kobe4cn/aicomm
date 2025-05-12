@@ -251,3 +251,44 @@ Content-Type: application/json
   "content": "Well great, you made great progress today",
   "files": []
 }
+
+
+###  create bot
+POST  http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "bot",
+  "email": "bot@bot.com",
+  "password": "test123456"
+}
+
+### create chat with bot
+POST  http://localhost:6688/api/chats
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "bot chat",
+  "members": [1,8],
+  "public": false
+}
+
+
+
+### create agent
+POST  http://localhost:6688/api/chats/4/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "bot agent",
+  "type": "reply",
+  "prompt": "You will answer all questions in Chinese.",
+  "args": {
+    "model": "gpt-4o"
+  },
+  "adapter": "ollama",
+  "model": "llama3.2"
+}

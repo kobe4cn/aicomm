@@ -17,6 +17,8 @@ pub struct User {
     #[serde(skip)]
     #[sqlx(default)]
     pub password_hash: Option<String>,
+    #[serde(default)]
+    pub is_bot: bool,
     pub created_at: DateTime<Utc>,
 }
 
@@ -184,6 +186,7 @@ impl User {
             email: email.to_string(),
             password_hash: None,
             created_at: chrono::Utc::now(),
+            is_bot: false,
         }
     }
 }

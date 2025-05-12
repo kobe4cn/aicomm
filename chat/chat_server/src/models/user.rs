@@ -27,7 +27,7 @@ pub struct SigninUser {
 impl AppState {
     pub async fn find_user_by_email(&self, email: &str) -> Result<Option<User>, AppError> {
         let user = sqlx::query_as(
-            r#"SELECT id,ws_id,fullname,email,created_at FROM users WHERE email=$1"#,
+            r#"SELECT id,ws_id,fullname,email,created_at,is_bot FROM users WHERE email=$1"#,
         )
         .bind(email)
         .fetch_optional(&self.pool)
@@ -48,13 +48,17 @@ impl AppState {
         };
 
         let password_hash = hash_password(&input.password)?;
-        let user:User = sqlx::query_as(
-            r#"INSERT INTO users (ws_id,fullname,email,password_hash) VALUES ($1,$2,$3,$4) RETURNING id,ws_id,fullname,email,created_at"#,
+
+        //check if email is bot TODO: move to a function
+        let is_bot = input.email.ends_with("@bot.com");
+        let user: User = sqlx::query_as(
+            r#"INSERT INTO users (ws_id,fullname,email,password_hash,is_bot) VALUES ($1,$2,$3,$4,$5) RETURNING id,ws_id,fullname,email,created_at,is_bot"#,
         )
         .bind(ws.id)
         .bind(&input.fullname)
         .bind(&input.email)
         .bind(password_hash)
+        .bind(is_bot)
         .fetch_one(&self.pool)
         .await?;
         self.update_workspace_owner(ws.id as _, user.id as _)
@@ -83,7 +87,7 @@ impl AppState {
         info!("input: {:?}", input);
 
         let user: Option<User> = sqlx::query_as(
-            r#"SELECT id,ws_id,fullname,email,password_hash,created_at FROM users WHERE email=$1"#,
+            r#"SELECT id,ws_id,fullname,email,password_hash,created_at,is_bot FROM users WHERE email=$1"#,
         )
         .bind(&input.email)
         .fetch_optional(&self.pool)

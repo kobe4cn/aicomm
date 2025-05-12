@@ -67,16 +67,17 @@ feature-depth = 1
 db-path = "$CARGO_HOME/advisory-db"
 # The url(s) of the advisory databases to use
 db-urls = ["https://github.com/rustsec/advisory-db"]
-# A list of advisory IDs to ignore. Note that ignored advisories will still
-# output a note when they are encountered.
 ignore = [
     #"RUSTSEC-0000-0000",
     "RUSTSEC-2023-0071",
-    "RUSTSEC-2024-0436"
+    "RUSTSEC-2024-0436",
+    "RUSTSEC-2025-0012", # backoff
+    "RUSTSEC-2024-0384", # instant
     #{ id = "RUSTSEC-0000-0000", reason = "you can specify a reason the advisory is ignored" },
     #"a-crate-that-is-yanked@0.1.1", # you can also ignore yanked crate versions if you wish
     #{ crate = "a-crate-that-is-yanked@0.1.1", reason = "you can specify why you are ignoring the yanked crate" },
-]
+] # A list of advisory IDs to ignore. Note that ignored advisories will still
+# output a note when they are encountered.
 # If this is true, then cargo deny will use the git executable to fetch advisory database.
 # If this is false, then it uses a built-in git library.
 # Setting this to true can be helpful if you have special authentication requirements that cargo-deny does not support.
@@ -103,6 +104,10 @@ allow = [
     "Zlib",
     "Unicode-3.0",
     "CDLA-Permissive-2.0",
+    "0BSD",
+    "NCSA",
+    "MPL-2.0",
+    "CC0-1.0",
 ]
 # The confidence threshold for detecting a license from license text.
 # The higher the value, the more closely the license text must be to the
@@ -152,7 +157,7 @@ license-files = [{ path = "LICENSE", hash = 0xbd0eed23 }]
 # To see how to mark a crate as unpublished (to the official registry),
 # visit https://doc.rust-lang.org/cargo/reference/manifest.html#the-publish-field.
 ignore = false
-    # One or more private registries that you might publish crates to, if a crate
+# One or more private registries that you might publish crates to, if a crate
 # is only published to private registries, and ignore is true, the crate will
 # not have its license(s) checked
 registries = [

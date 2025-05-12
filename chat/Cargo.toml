@@ -1,15 +1,19 @@
 [workspace]
 
-members = [ "ai_sdk",  "chat_server", "chat_test", "core_lib", "notify_server"]
+members = [
+    "ai_sdk",
+    "bot_server",
+    "chat_server",
+    "chat_test",
+    "core_lib",
+    "notify_server",
+    "swiftide_pgvector",
+]
 resolver = "2"
 
 [workspace.dependencies]
 
-tokio = { version = "1.37.0", features = [
-    "rt",
-    "rt-multi-thread",
-    "macros",
-] }
+tokio = { version = "1.37.0", features = ["rt", "rt-multi-thread", "macros"] }
 
 thiserror = "2.0.11"
 axum = { version = "0.8.1", features = [
@@ -37,6 +41,7 @@ chrono = { version = "0.4.38", features = ["serde"] }
 core_lib = { path = "./core_lib" }
 chat_server = { path = "./chat_server" }
 notify_server = { path = "./notify_server" }
+swiftide_pgvector = { path = "./swiftide_pgvector" }
 chat_test = { path = "./chat_test" }
 jwt-simple = "0.12.10"
 axum-extra = { version = "0.10.0", features = ["typed-header"] }

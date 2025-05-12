@@ -5,7 +5,6 @@ use swiftide::{
     traits::SimplePrompt,
 };
 
-
 #[allow(unused)]
 pub struct VectorStore {
     pub vector_store: PgVector,
@@ -50,7 +49,7 @@ pub async fn ask_query(
     embed: FastEmbed,
     vector_store: PgVector,
     questions: Vec<String>,
-) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+) -> Result<Vec<String>, Box<dyn std::error::Error + Send + Sync>> {
     // By default the search strategy is SimilaritySingleEmbedding
     // which takes the latest query, embeds it, and does a similarity search
     //
