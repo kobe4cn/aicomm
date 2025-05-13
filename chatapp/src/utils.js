@@ -38,13 +38,13 @@ const initSSE = (store) => {
     let data = JSON.parse(e.data);
     console.log('message:', e.data);
     delete data.event;
-    store.commit('addMessage', { channelId: data.chatId, message: data });
+    store.commit('addMessage', { channelId: data.chat_id, message: data });
   });
 
   sse.onmessage = (event) => {
     console.log('got event:', event);
-    // const data = JSON.parse(event.data);
-    // commit('addMessage', data);
+    const data = JSON.parse(event.data);
+    commit('addMessage', data);
   };
 
   sse.onerror = (error) => {

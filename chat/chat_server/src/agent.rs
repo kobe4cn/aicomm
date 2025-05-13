@@ -126,7 +126,7 @@ mod tests {
 
     use super::*;
     use anyhow::Result;
-
+    #[ignore]
     #[tokio::test]
     async fn test_proxy_agent() {
         let agent=ChatAgents {

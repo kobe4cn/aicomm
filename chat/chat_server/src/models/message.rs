@@ -99,24 +99,24 @@ impl AppState {
                     chat_id, reply
                 );
             }
-            let other_user = chat
-                .members
-                .iter()
-                .find(|&&id| id != user_id as i64)
-                .expect("other user not found");
+            // let other_user = chat
+            //     .members
+            //     .iter()
+            //     .find(|&&id| id != user_id as i64)
+            //     .expect("other user not found");
 
-            let _id: i64 = sqlx::query_scalar(
-                r#"
-                INSERT INTO messages(chat_id,sender_id,content)
-                VALUES($1,$2,$3)
-                RETURNING id
-                "#,
-            )
-            .bind(chat_id as i64)
-            .bind(other_user)
-            .bind(reply)
-            .fetch_one(pool)
-            .await?;
+            // let _id: i64 = sqlx::query_scalar(
+            //     r#"
+            //     INSERT INTO messages(chat_id,sender_id,content)
+            //     VALUES($1,$2,$3)
+            //     RETURNING id
+            //     "#,
+            // )
+            // .bind(chat_id as i64)
+            // .bind(other_user)
+            // .bind(reply)
+            // .fetch_one(pool)
+            // .await?;
         }
 
         Ok(message)
@@ -129,7 +129,7 @@ impl AppState {
         chat_id: u64,
     ) -> Result<Vec<Message>, AppError> {
         let last_id = input.last_id.unwrap_or(i64::MAX as _);
-        let page_size = input.page_size.clamp(50, 200) as i64;
+        let page_size = input.page_size.clamp(100, 500) as i64;
         let pool = &self.pool;
 
         println!("last_id: {} {} {}", last_id, chat_id, page_size);

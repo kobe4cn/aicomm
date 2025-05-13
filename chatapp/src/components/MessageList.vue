@@ -39,10 +39,11 @@ export default {
   },
   computed: {
     messages() {
-      return this.$store.getters.getMessagesForActiveChannel;
+      const msgs = this.$store.getters.getMessagesForActiveChannel;
+      // console.log('MessageList.vue computed messages:', msgs);
+      return msgs;
     },
     activeChannelId() {
-
       let channel = this.$store.state.activeChannel;
       if (!channel) {
         return null;
@@ -53,6 +54,7 @@ export default {
   watch: {
     messages: {
       handler() {
+        // alert("messages:" + JSON.stringify(this.messages));
         this.$nextTick(() => {
           this.scrollToBottom();
         });
