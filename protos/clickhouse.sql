@@ -17,6 +17,7 @@ CREATE TABLE analytics_events (
     server_ts DateTime64(3),
     -- event_type oneof
     event_type Enum8(
+        'unspecified' = 0,
         'app_start' = 1,
         'app_exit' = 2,
         'user_login' = 3,

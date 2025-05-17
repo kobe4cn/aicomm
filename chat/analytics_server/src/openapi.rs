@@ -1,30 +1,27 @@
+use crate::{
+    AppState,
+    events::{AnalyticsEventRow, AppExitCode, EventTypeRow},
+};
 use axum::Router;
-use core_lib::{Chat, ChatType, ChatUser, Message, User, WorkSpace};
 use utoipa::{
     Modify, OpenApi,
     openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme},
 };
-
 use utoipa_rapidoc::RapiDoc;
 use utoipa_redoc::{Redoc, Servable};
 use utoipa_scalar::{Scalar, Servable as _};
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::AppState;
 pub(crate) trait OpenApiRouter {
     fn openapi(self) -> Self;
 }
-
 #[derive(OpenApi)]
 #[openapi(
-    paths(
-
-
-    ),
-        components(schemas( User,Chat,ChatType,ChatUser,Message,WorkSpace)),
+    paths(),
+        components(schemas( AnalyticsEventRow,EventTypeRow,AppExitCode)),
         modifiers(&SecurityAddon),
         tags(
-            (name = "todo", description = "Todo items management API")
+            (name = "analytics", description = "Analytics API")
         )
     )]
 pub(crate) struct ApiDoc;

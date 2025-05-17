@@ -20,6 +20,8 @@ pub enum AppError {
     MissingEventType,
     #[error("Missing event context")]
     MissingEventContext,
+    #[error("reqwest error {0}")]
+    ReqwestError(#[from] reqwest::Error),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -44,6 +46,7 @@ impl IntoResponse for AppError {
             Self::CreateAnalyticsEventError(_) => StatusCode::BAD_REQUEST,
             Self::MissingEventType => StatusCode::BAD_REQUEST,
             Self::MissingEventContext => StatusCode::BAD_REQUEST,
+            Self::ReqwestError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
         (status_code, Json(ErrorOutput::new(self.to_string()))).into_response()
     }

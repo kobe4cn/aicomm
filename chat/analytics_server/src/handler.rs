@@ -7,7 +7,21 @@ use axum::{
 };
 use axum_extra::protobuf::Protobuf;
 use core_lib::User;
+use tracing::info;
 
+#[utoipa::path(
+    post,
+    description = "Create Event handler",
+    path = "/api/event",
+    responses(
+        (status = 201, description = "Create Event",)
+    ),
+    security(
+        (), // <-- make optional authentication
+        ("token" = [])
+    )
+
+)]
 pub(crate) async fn create_event_handler(
     parts: Parts,
     State(state): State<AppState>,
@@ -20,6 +34,7 @@ pub(crate) async fn create_event_handler(
     } else {
         row.user_id = None;
     }
+    info!("row: {:?}", row);
     let mut insert = client.insert("analytics_events")?;
 
     insert.write(&row).await?;
@@ -79,7 +94,7 @@ mod tests {
             ws_id: 1,
             fullname: "kevin".to_string(),
             email: "kevin.yang.xgz@gmail.com".to_string(),
-            password_hash: None,
+            password_hash: Some("test123456".to_string()),
             is_bot: false,
             created_at: chrono::Utc::now(),
         });

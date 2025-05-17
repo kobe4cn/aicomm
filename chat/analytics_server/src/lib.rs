@@ -1,21 +1,21 @@
 mod config;
 mod error;
 mod events;
-mod handler;
+pub mod handler;
 mod openapi;
 pub mod pb;
-
-use core::fmt;
-use std::{ops::Deref, sync::Arc};
 
 use anyhow::Context;
 use axum::{Router, http::Method, middleware::from_fn_with_state, routing::post};
 use clickhouse::Client;
 pub use config::*;
+use core::fmt;
 use core_lib::{DecodingKey, EncodingKey, TokenVerify, User, set_layer, verify_token};
 pub use error::*;
 use handler::create_event_handler;
 use openapi::OpenApiRouter;
+pub use pb::AnalyticsEvent;
+use std::{ops::Deref, sync::Arc};
 use tower_http::cors::{self, CorsLayer};
 
 #[derive(Debug, Clone)]

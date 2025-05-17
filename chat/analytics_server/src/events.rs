@@ -1,5 +1,7 @@
 use clickhouse::Row;
 use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
+use utoipa::ToSchema;
 
 use crate::{
     AppError,
@@ -10,7 +12,7 @@ use crate::{
     },
 };
 
-#[derive(Row, Default, Serialize, Debug, Deserialize)]
+#[derive(Row, Serialize, Debug, Deserialize, ToSchema, Default)]
 pub struct AnalyticsEventRow {
     // EventContext
     pub client_id: String,
@@ -58,26 +60,29 @@ pub struct AnalyticsEventRow {
     pub navigation_from: Option<String>,
     pub navigation_to: Option<String>,
 }
-
-#[derive(Serialize, Debug, Clone, Copy, Deserialize, Default)]
-#[allow(dead_code)]
+///对于clickhouse的 enum 类型，需要使用 Serialize_repr 和 Deserialize_repr 来序列化和反序列化
+/// 需要cargo add serde_repr,
+/// 需要repr(i8) 来指定枚举的类型
+#[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr, ToSchema, Default)]
+#[repr(i8)]
 #[serde(rename_all = "snake_case")]
 pub enum EventTypeRow {
-    AppStart,
-    AppExit,
-    UserLogin,
-    UserLogout,
-    UserRegister,
-    MessageSent,
-    ChatCreated,
-    ChatJoined,
-    ChatLeft,
-    Navigation,
+    AppStart = 1,
+    AppExit = 2,
+    UserLogin = 3,
+    UserLogout = 4,
+    UserRegister = 5,
+    MessageSent = 6,
+    ChatCreated = 7,
+    ChatJoined = 8,
+    ChatLeft = 9,
+    Navigation = 10,
     #[default]
-    Unspecified,
+    Unspecified = 0,
 }
 
-#[derive(Serialize, Debug, Clone, Copy, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr, ToSchema, Default)]
+#[repr(i8)]
 #[allow(dead_code)]
 #[serde(rename_all = "snake_case")]
 pub enum AppExitCode {
