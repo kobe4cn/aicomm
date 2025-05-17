@@ -86,7 +86,7 @@ jobs:
       - name: Execute rust tests
         run: |
           for dir in $RUST_DIRS; do
-            if [ "$dir" = "chat_test" ] || [ "$dir" = "chatapp" ]; then
+            if [ "$dir" = "chat_test" ] || [ "$dir" = "chatapp" ] || [ "$dir" = "chatapp/src-tauri" ] ; then
               echo "Skipping $dir"
               continue
             fi
