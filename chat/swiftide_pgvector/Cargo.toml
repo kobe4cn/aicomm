@@ -8,7 +8,6 @@ license = "MIT"
 anyhow = "1.0.98"
 swiftide = { version = "0.26.0", features = [
     "fastembed",
-    "lancedb",
     "ollama",
     "openai",
     "pgvector",

@@ -1,7 +1,7 @@
 mod config;
 mod error;
 mod events;
-pub mod handler;
+mod handler;
 mod openapi;
 pub mod pb;
 

@@ -45,7 +45,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err("Failed to get database connection pool".into());
     }
 
-    let chunk_size = 1024;
+    let chunk_size = 384;
     info!("Starting indexing pipeline");
 
     indexing::Pipeline::from_loader(FileLoader::new("./examples/").with_extensions(&["rs"]))
