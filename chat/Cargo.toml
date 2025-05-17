@@ -4,7 +4,6 @@ members = [
     "ai_sdk", "analytics_server",
     "bot_server",
     "chat_server",
-    "chat_test",
     "core_lib",
     "notify_server",
     "swiftide_pgvector",

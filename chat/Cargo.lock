@@ -877,23 +877,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "chat_test"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "axum",
- "chat_server",
- "core_lib",
- "futures 0.3.31",
- "notify_server",
- "reqwest 0.11.27",
- "reqwest-eventsource 0.6.0",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
 name = "chrono"
 version = "0.4.39"
 source = "registry+https://github.com/rust-lang/crates.io-index"
