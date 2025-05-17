@@ -12,8 +12,8 @@ use middlewares::verify_chat;
 mod middlewares;
 use openapi::OpenApiRouter;
 use sqlx::{Executor, PgPool};
-use sqlx_db_tester::TestPg;
 
+use sqlx_db_tester::TestPg;
 use tokio::fs;
 mod models;
 use axum::{
@@ -133,6 +133,7 @@ impl AppState {
             }),
         })
     }
+
     #[allow(unused)]
     pub async fn new_for_test() -> Result<(TestPg, Self), AppError> {
         let config = AppConfig::try_load().context("load config failed")?;
