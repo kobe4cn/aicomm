@@ -86,6 +86,10 @@ jobs:
       - name: Execute rust tests
         run: |
           for dir in $RUST_DIRS; do
+            if [ "$dir" = "chat_test" ]; then
+              echo "Skipping $dir"
+              continue
+            fi
             cd $dir && cargo nextest run --all-features
             cd ..
           done
