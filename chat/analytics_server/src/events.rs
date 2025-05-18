@@ -121,6 +121,10 @@ impl EventConsume for EventContext {
             row.system_arch = system.arch;
             row.system_language = system.language;
             row.system_timezone = system.timezone;
+        } else {
+            return Err(AppError::MissingSystemInfo(
+                "system_info missing".to_string(),
+            ));
         }
         if let Some(geo) = self.geo {
             row.geo_country = Some(geo.country);

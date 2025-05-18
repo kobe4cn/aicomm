@@ -1,3 +1,5 @@
+use std::fs;
+
 use analytics_server::{
     AppError,
     pb::{
@@ -36,6 +38,8 @@ async fn main() -> Result<(), AppError> {
     event.context = Some(context);
     let event_type = EventType::AppExit(AppExitEvent { exit_code: 1 });
     event.event_type = Some(event_type);
+    let bytes = event.encode_to_vec();
+    fs::write("../../fixtures/event.bin", &bytes).unwrap();
     // println!("{:?}", event.event_type);
     let token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NDczNjk4NDcsImV4cCI6MTc0OTk2MTg0NywibmJmIjoxNzQ3MzY5ODQ3LCJpc3MiOiJjaGF0X3NlcnZlciIsImF1ZCI6ImNoYXRfd2ViIiwiaWQiOjEsIndzX2lkIjoxLCJmdWxsbmFtZSI6ImtldmluIHlhbmciLCJlbWFpbCI6ImtldmluLnlhbmcueGd6QGdtYWlsLmNvbSIsImlzX2JvdCI6ZmFsc2UsImNyZWF0ZWRfYXQiOiIyMDI1LTA1LTA4VDA5OjE2OjMxLjczNzU0MVoifQ.8n0ME4MQ8Wv9yGHaQeJGRZ7WszMbdcjv_OLh406HNvkU2PPHhRMRtjFrCk2xMKhWuHX1tXB4zxJ4YCtPsahVDA";
 

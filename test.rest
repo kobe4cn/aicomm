@@ -292,3 +292,14 @@ Content-Type: application/json
   "adapter": "ollama",
   "model": "llama3.2"
 }
+
+
+### send an event
+POST  http://localhost:6690/api/event
+Authorization: Bearer {{token}}
+Content-Type: application/protobuf
+X-Country: China
+X-Region: GuangDong
+X-City: Guangzhou
+
+< ./fixtures/event.bin

@@ -2,7 +2,7 @@ use crate::{AppError, AppState, events::AnalyticsEventRow, pb::AnalyticsEvent};
 
 use axum::{
     extract::State,
-    http::{StatusCode, request::Parts},
+    http::{HeaderMap, StatusCode, request::Parts},
     response::IntoResponse,
 };
 use axum_extra::protobuf::Protobuf;
@@ -23,17 +23,35 @@ use tracing::info;
 
 )]
 pub(crate) async fn create_event_handler(
-    parts: Parts,
     State(state): State<AppState>,
+    parts: Parts,
+    headers: HeaderMap,
     Protobuf(event): Protobuf<AnalyticsEvent>,
 ) -> Result<impl IntoResponse, AppError> {
     let client = state.client.clone();
     let mut row = AnalyticsEventRow::try_from(event)?;
+    if let Some(country) = headers.get("X-Country") {
+        if let Ok(country_str) = country.to_str() {
+            row.geo_country = Some(country_str.to_string());
+        }
+    }
+    if let Some(region) = headers.get("X-Region") {
+        if let Ok(region_str) = region.to_str() {
+            row.geo_region = Some(region_str.to_string());
+        }
+    }
+    if let Some(city) = headers.get("X-City") {
+        if let Ok(city_str) = city.to_str() {
+            row.geo_city = Some(city_str.to_string());
+        }
+    }
+
     if let Some(user_id) = parts.extensions.get::<User>() {
         row.user_id = Some(user_id.id.to_string());
     } else {
         row.user_id = None;
     }
+
     info!("row: {:?}", row);
     let mut insert = client.insert("analytics_events")?;
 

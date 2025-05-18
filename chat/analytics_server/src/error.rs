@@ -5,6 +5,7 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
+use tracing::warn;
 
 #[derive(Error, Debug)]
 pub enum AppError {
@@ -22,6 +23,8 @@ pub enum AppError {
     MissingEventContext,
     #[error("reqwest error {0}")]
     ReqwestError(#[from] reqwest::Error),
+    #[error("missing system info {0}")]
+    MissingSystemInfo(String),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -47,7 +50,10 @@ impl IntoResponse for AppError {
             Self::MissingEventType => StatusCode::BAD_REQUEST,
             Self::MissingEventContext => StatusCode::BAD_REQUEST,
             Self::ReqwestError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::MissingSystemInfo(_) => StatusCode::BAD_REQUEST,
         };
+        let msg = self.to_string();
+        warn!("Status code: {}, Error: {}   ", status_code, msg);
         (status_code, Json(ErrorOutput::new(self.to_string()))).into_response()
     }
 }
