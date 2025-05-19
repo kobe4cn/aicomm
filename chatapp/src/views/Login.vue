@@ -45,12 +45,12 @@ export default {
   methods: {
     async login() {
       try {
-        this.$store.dispatch('userLogin', { email: this.email });
+
         const user = await this.$store.dispatch('signin', {
           email: this.email,
           password: this.password,
         });
-
+        this.$store.dispatch('userLogin', { email: this.email });
         console.log('Signin successful, user:', user);
         this.$router.push('/'); // Redirect to chat after successful signup
       } catch (error) {
