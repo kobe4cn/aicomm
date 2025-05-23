@@ -5,7 +5,7 @@ edition = "2024"
 license = "MIT"
 
 [[bin]]
-name = "bot"
+name = "bot_server"
 path = "src/server.rs"
 
 
@@ -26,10 +26,11 @@ jwt-simple = { workspace = true }
 dashmap = "6.1.0"
 serde_json = { workspace = true }
 swiftide = { version = "0.26.0", features = [
-    "fastembed",
-    "ollama",
-    "openai",
     "pgvector",
+    "swiftide-agents",
+    "openai",
+    "tree-sitter",
 ] }
 swiftide_pgvector = { workspace = true }
 time = { workspace = true }
+reqwest = { version = "0.12" }

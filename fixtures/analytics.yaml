@@ -1,0 +1,17 @@
+server:
+  port: 6690
+  host: 0.0.0.0
+  db_url: http://host.container.internal:8123
+  db_name: default
+  user: clickhouse
+  password: clickhouse
+  base_dir: /tmp/analytics_server
+auth:
+  sk: |
+    -----BEGIN PRIVATE KEY-----
+    MC4CAQAwBQYDK2VwBCIEIA4mh6ctXYftfwRb4je+XyO+D47YNI6ytsmAPpQFq+rt
+    -----END PRIVATE KEY-----
+  pk: |
+    -----BEGIN PUBLIC KEY-----
+    MCowBQYDK2VwAyEAXb0Hfuxwr6GN5eMHesm5LmYGATOArNiN7JYQOiDhVag=
+    -----END PUBLIC KEY-----

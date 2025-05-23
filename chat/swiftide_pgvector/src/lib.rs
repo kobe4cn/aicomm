@@ -1,55 +1,56 @@
 use swiftide::{
     indexing::EmbeddedField,
-    integrations::{self, fastembed::FastEmbed, pgvector::PgVector},
+    integrations::{self, openai::GenericOpenAI, pgvector::PgVector},
     query::{self, answers, query_transformers, response_transformers},
-    traits::SimplePrompt,
 };
 
 #[allow(unused)]
 pub struct VectorStore {
     pub vector_store: PgVector,
-    pub embed: FastEmbed,
-    pub llm_client: Box<dyn SimplePrompt>,
+    // pub embed: Embed,
+    pub llm_client: GenericOpenAI,
 }
 
 impl VectorStore {
-    pub fn try_new(table_name: &str, metadata: &str) -> Self {
+    pub async fn try_new(
+        table_name: &str,
+        metadata: &str,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
         let pgv_storage = PgVector::builder()
             .db_url("postgresql://postgres:postgres@localhost:5432/chat")
-            .vector_size(384)
+            .vector_size(1536)
             .with_vector(EmbeddedField::Combined)
             .with_metadata(metadata)
             .table_name(table_name)
             .build()
             .unwrap();
-        let llm_client = integrations::ollama::Ollama::default()
-            .with_default_prompt_model("llama3.2")
-            .to_owned();
+        let openai_client = integrations::openai::OpenAI::builder()
+            .default_embed_model("text-embedding-3-small")
+            .default_prompt_model("gpt-4o")
+            .build()?;
 
-        let fastembed =
-            integrations::fastembed::FastEmbed::try_default().expect("could not create fastembed");
+        // let embed = Embed::new(openai_client.clone());
 
-        Self::new(pgv_storage, fastembed, Box::new(llm_client))
+        Self::new(pgv_storage, openai_client)
     }
     pub fn new(
         vector_store: PgVector,
-        embed: FastEmbed,
-        llm_client: Box<dyn SimplePrompt>,
-    ) -> Self {
-        Self {
+
+        llm_client: GenericOpenAI,
+    ) -> Result<Self, Box<dyn std::error::Error>> {
+        Ok(Self {
             vector_store,
-            embed,
+
             llm_client,
-        }
+        })
     }
 }
 
 pub async fn ask_query(
-    llm_client: Box<dyn SimplePrompt>,
-    embed: FastEmbed,
+    llm_client: GenericOpenAI,
     vector_store: PgVector,
     questions: Vec<String>,
-) -> Result<Vec<String>, Box<dyn std::error::Error + Send + Sync>> {
+) -> Result<Vec<String>, Box<dyn std::error::Error>> {
     // By default the search strategy is SimilaritySingleEmbedding
     // which takes the latest query, embeds it, and does a similarity search
     //
@@ -63,7 +64,7 @@ pub async fn ask_query(
         .then_transform_query(query_transformers::GenerateSubquestions::from_client(
             llm_client.clone(),
         ))
-        .then_transform_query(query_transformers::Embed::from_client(embed))
+        .then_transform_query(query_transformers::Embed::from_client(llm_client.clone()))
         .then_retrieve(vector_store.clone())
         .then_transform_response(response_transformers::Summary::from_client(
             llm_client.clone(),

@@ -5,7 +5,7 @@ use axum::{
     Json,
 };
 use serde_json::json;
-use tracing::info;
+
 use utoipa::ToSchema;
 
 use crate::{
@@ -50,7 +50,7 @@ pub(crate) async fn signin_handler(
     State(state): State<AppState>,
     Json(input): Json<SigninUser>,
 ) -> Result<impl IntoResponse, AppError> {
-    info!("signin: {:?}", input);
+    // info!("signin: {:?}", input);
     let user = state.verify_user(&input).await?;
     match user {
         Some(user) => {

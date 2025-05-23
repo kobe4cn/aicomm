@@ -26,7 +26,7 @@ impl AppConfig {
         let ret = match (
             File::open("../notify_server/notify.yaml"),
             File::open("notify_server/notify.yaml"),
-            File::open("/etc/config/notify.yaml"),
+            File::open("/app/notify.yaml"),
             std::env::var("NOTIFY_CONFIG"),
         ) {
             (Ok(reader), _, _, _) => serde_yaml::from_reader(reader),

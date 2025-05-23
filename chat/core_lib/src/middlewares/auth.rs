@@ -26,18 +26,39 @@ where
     T: TokenVerify + Clone + Send + Sync + 'static,
 {
     let (mut parts, body) = req.into_parts();
+    let referer = parts
+        .headers
+        .get("referer")
+        .and_then(|h| h.to_str().ok())
+        .map(|s| s.to_string());
+    let origin = parts
+        .headers
+        .get("origin")
+        .and_then(|h| h.to_str().ok())
+        .map(|s| s.to_string());
     match extract_token(&state, &mut parts).await {
         Ok(token) => {
             let mut req = Request::from_parts(parts, body);
             match set_user(&state, token, &mut req) {
                 Ok(_) => next.run(req).await,
                 Err(e) => {
-                    warn!("verify token failed: {:?}", e);
-                    (StatusCode::FORBIDDEN, e.to_string()).into_response()
+                    if let (Some(ref_url), Some(origin_url)) = (referer, origin) {
+                        if ref_url.starts_with(&origin_url) {
+                            next.run(req).await
+                        } else {
+                            warn!("extract_token verify token failed: {:?}", e);
+                            (StatusCode::FORBIDDEN, e.to_string()).into_response()
+                        }
+                    } else {
+                        warn!("extract_token verify token failed: {:?}", e);
+                        (StatusCode::FORBIDDEN, e.to_string()).into_response()
+                    }
                 }
             }
         }
         Err(e) => {
+            // 登陆的时候如果没有token，说明是在登陆界面
+
             warn!("verify token failed: {:?}", e);
             (StatusCode::UNAUTHORIZED, e.to_string()).into_response()
         }
@@ -77,7 +98,7 @@ where
                 }
             } else {
                 let msg = format!("verify token failed: {:?}", e);
-                warn!(msg);
+                // warn!(msg);
                 Err(msg)
             }
         }
@@ -95,7 +116,7 @@ where
         }
         Err(e) => {
             let msg = format!("verify token failed: {:?}", e);
-            warn!(msg);
+            // warn!(msg);
             Err(msg)
         }
     }

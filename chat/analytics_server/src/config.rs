@@ -28,8 +28,8 @@ impl AppConfig {
     pub fn try_load() -> Result<Self> {
         // read from ./app.yml, or /etc/config/app.yml, or from env CHAT_CONFIG
         let ret = match (
-            File::open("../analytics_server/app.yaml"),
-            File::open("analytics_server/app.yaml"),
+            File::open("../analytics_server/analytics.yaml"),
+            File::open("/app/analytics.yaml"),
             // File::open("/etc/config/app.yaml"),
             std::env::var("ANALYTICS_CONFIG"),
         ) {

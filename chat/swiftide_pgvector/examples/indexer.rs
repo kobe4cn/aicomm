@@ -1,7 +1,7 @@
 use metadata_qa_text::NAME as METADATA_QA_TEXT_NAME;
 use swiftide::{
     indexing::{
-        self,
+        self, LanguageModelWithBackOff,
         loaders::FileLoader,
         transformers::{ChunkMarkdown, Embed, MetadataQAText, metadata_qa_text},
     },
@@ -14,12 +14,13 @@ use tracing_subscriber::{Layer as _, fmt::Layer, layer::SubscriberExt, util::Sub
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let layer = Layer::new().pretty().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(layer).init();
-    let vector_store = VectorStore::try_new("rag_table", METADATA_QA_TEXT_NAME);
+    let vector_store = VectorStore::try_new("rag_table", METADATA_QA_TEXT_NAME).await?;
 
-    let llm_client = integrations::ollama::Ollama::default()
-        .with_default_prompt_model("llama3.2")
-        .to_owned();
-
+    let llm_client = integrations::openai::OpenAI::builder()
+        .default_embed_model("text-embedding-3-small")
+        .default_prompt_model("gpt-4o")
+        .build()?;
+    let llm_client = LanguageModelWithBackOff::new(llm_client, Default::default());
     // let fastembed =
     //     integrations::fastembed::FastEmbed::try_default().expect("could not create fastembed");
 
@@ -39,7 +40,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     indexing::Pipeline::from_loader(FileLoader::new("README.md"))
         .then_chunk(ChunkMarkdown::from_chunk_range(10..2048))
         .then(MetadataQAText::new(llm_client.clone()))
-        .then_in_batch(Embed::new(vector_store.embed.clone()).with_batch_size(100))
+        .then_in_batch(Embed::new(llm_client.clone()).with_batch_size(100))
         .then_store_with(vector_store.vector_store.clone())
         .run()
         .await?;

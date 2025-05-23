@@ -1,88 +1,103 @@
 // use metadata_qa_text::NAME as METADATA_QA_TEXT_NAME;
 use swiftide::{
     indexing::{
-        self,
+        self, EmbeddedField, LanguageModelWithBackOff,
         loaders::FileLoader,
         transformers::{
-            ChunkCode, Embed, MetadataQACode, metadata_qa_code::NAME as METADATA_QA_CODE_NAME,
+            ChunkCode, Embed, MetadataQACode,
+            metadata_qa_code::{self},
         },
     },
-    integrations::{self},
+    integrations::{self, pgvector::PgVector},
 };
-use swiftide_pgvector::VectorStore;
+
 use tracing::{info, level_filters::LevelFilter};
 use tracing_subscriber::{Layer as _, fmt::Layer, layer::SubscriberExt, util::SubscriberInitExt};
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let layer = Layer::new().pretty().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(layer).init();
-    let vector_store = VectorStore::try_new("code_table", METADATA_QA_CODE_NAME);
+    // let vector_store = VectorStore::try_new("code_table", METADATA_QA_CODE_NAME).await?;
 
-    let llm_client = integrations::ollama::Ollama::default()
-        .with_default_prompt_model("llama3.2")
-        .to_owned();
+    // let openai_client = integrations::openai::OpenAI::builder()
+    //     .default_embed_model("text-embedding-3-small")
+    //     .default_prompt_model("gpt-3.5-turbo")
+    //     .build()?;
 
-    // let pgv_storage = PgVector::builder()
-    //     .db_url("postgresql://postgres:postgres@localhost:5432/swiftide_ray")
-    //     .vector_size(384)
-    //     .with_vector(EmbeddedField::Combined)
-    //     .with_metadata(METADATA_QA_CODE_NAME)
-    //     .table_name("code_table")
-    //     .build()
-    //     .unwrap();
+    // let openai_client = LanguageModelWithBackOff::new(openai_client, Default::default());
+    // let open_ai_key = std::env::var("OPENAI_API_KEY").unwrap_or_else(|_| "".to_string());
+    // info!("open_ai_key: {}", open_ai_key);
 
-    // let fastembed =
-    //     integrations::fastembed::FastEmbed::try_default().expect("could not create fastembed");
+    // info!("Dropping existing table and index");
+    // let drop_table_sql = "DROP TABLE IF EXISTS code_table";
+    // let drop_index_sql = "DROP INDEX IF EXISTS code_table_embedding_idx";
 
+    // if let Ok(pool) = vector_store.vector_store.get_pool().await {
+    //     sqlx::query(drop_table_sql).execute(pool).await?;
+    //     sqlx::query(drop_index_sql).execute(pool).await?;
+    // } else {
+    //     return Err("Failed to get database connection pool".into());
+    // }
+
+    // // let chunk_size = 2048;
+    // info!("Starting indexing pipeline");
+    let openai_client = integrations::openai::OpenAI::builder()
+        .default_embed_model("text-embedding-3-small")
+        .default_prompt_model("gpt-3.5-turbo")
+        .build()?;
+
+    let openai_client = LanguageModelWithBackOff::new(openai_client, Default::default());
+
+    let pgv_storage = PgVector::builder()
+        .db_url("postgresql://postgres:postgres@localhost:5432/chat")
+        .vector_size(1536)
+        .with_vector(EmbeddedField::Combined)
+        .with_metadata(metadata_qa_code::NAME)
+        .table_name("code_table")
+        .build()
+        .unwrap();
     info!("Dropping existing table and index");
     let drop_table_sql = "DROP TABLE IF EXISTS code_table";
     let drop_index_sql = "DROP INDEX IF EXISTS code_table_embedding_idx";
 
-    if let Ok(pool) = vector_store.vector_store.get_pool().await {
+    if let Ok(pool) = pgv_storage.get_pool().await {
         sqlx::query(drop_table_sql).execute(pool).await?;
         sqlx::query(drop_index_sql).execute(pool).await?;
     } else {
         return Err("Failed to get database connection pool".into());
     }
-
-    let chunk_size = 384;
-    info!("Starting indexing pipeline");
-
-    indexing::Pipeline::from_loader(FileLoader::new("./examples/").with_extensions(&["rs"]))
+    indexing::Pipeline::from_loader(FileLoader::new("./examples").with_extensions(&["rs"]))
+        // .filter_cached(Redis::try_from_url(redis_url, "swiftide-examples")?)
+        .then(MetadataQACode::new(openai_client.clone()))
         .then_chunk(ChunkCode::try_for_language_and_chunk_size(
-            "rust", chunk_size,
+            "rust",
+            10..2048,
         )?)
-        .then(MetadataQACode::new(llm_client.clone()))
-        .then_in_batch(Embed::new(vector_store.embed.clone()).with_batch_size(30))
-        .then(indexing::transformers::CompressCodeOutline::new(
-            llm_client.clone(),
-        ))
-        .then(PrintMetadata)
-        .then_store_with(vector_store.vector_store.clone())
+        .then_in_batch(Embed::new(openai_client.clone()).with_batch_size(10))
+        .then_store_with(pgv_storage)
         .run()
         .await?;
-
     info!("Indexing pipeline completed successfully");
 
     Ok(())
 }
 
-#[derive(Clone)]
-#[allow(unused)]
-struct PrintMetadata;
+// #[derive(Clone)]
+// #[allow(unused)]
+// struct PrintMetadata;
 
-#[async_trait::async_trait]
-impl swiftide::traits::Transformer for PrintMetadata {
-    async fn transform_node(
-        &self,
-        node: swiftide::indexing::Node,
-    ) -> Result<swiftide::indexing::Node, anyhow::Error> {
-        println!("Metadata: {:?}", node);
-        Ok(node)
-    }
-}
+// #[async_trait::async_trait]
+// impl swiftide::traits::Transformer for PrintMetadata {
+//     async fn transform_node(
+//         &self,
+//         node: swiftide::indexing::Node,
+//     ) -> Result<swiftide::indexing::Node, anyhow::Error> {
+//         println!("Metadata: {:?}", node);
+//         Ok(node)
+//     }
+// }
 
-impl swiftide::traits::WithIndexingDefaults for PrintMetadata {}
+// impl swiftide::traits::WithIndexingDefaults for PrintMetadata {}
 
 // #[derive(Clone)]
 // #[allow(unused)]

@@ -27,7 +27,7 @@ impl AppConfig {
         let ret = match (
             File::open("../chat_server/app.yaml"),
             File::open("chat_server/app.yaml"),
-            File::open("/etc/config/app.yaml"),
+            File::open("/app/app.yaml"),
             std::env::var("CHAT_CONFIG"),
         ) {
             (Ok(reader), _, _, _) => serde_yaml::from_reader(reader),

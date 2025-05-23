@@ -7,7 +7,6 @@ use axum::{
 };
 use axum_extra::protobuf::Protobuf;
 use core_lib::User;
-use tracing::info;
 
 #[utoipa::path(
     post,
@@ -52,7 +51,7 @@ pub(crate) async fn create_event_handler(
         row.user_id = None;
     }
 
-    info!("row: {:?}", row);
+    // info!("row: {:?}", row);
     let mut insert = client.insert("analytics_events")?;
 
     insert.write(&row).await?;

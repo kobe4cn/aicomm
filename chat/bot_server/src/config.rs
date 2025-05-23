@@ -18,9 +18,9 @@ impl AppConfig {
     pub fn try_load() -> Result<Self> {
         // read from ./app.yml, or /etc/config/app.yml, or from env CHAT_CONFIG
         let ret = match (
-            File::open("../bot_server/app.yaml"),
-            File::open("bot_server/app.yaml"),
-            File::open("/etc/config/app.yaml"),
+            File::open("../bot_server/bot.yaml"),
+            File::open("bot_server/bot.yaml"),
+            File::open("/app/bot.yaml"),
             std::env::var("BOT_CONFIG"),
         ) {
             (Ok(reader), _, _, _) => serde_yaml::from_reader(reader),
