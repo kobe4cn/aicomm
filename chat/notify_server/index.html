@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSE Handler</title>
+</head>
+<body>
+    <h1>SSE_HANDLER</h1>
+    <!-- Token Input Field -->
+    <label for="tokenInput">Enter Token:</label>
+    <input type="text" id="tokenInput" placeholder="Enter your token here">
+    <button onclick="connect()">Connect</button>
+
+    <script lang="javascript">
+        let source;
+
+        function connect() {
+            // Get the token from the input field
+            const token = document.getElementById("tokenInput").value;
+
+            // Check if the token is not empty
+            if (!token) {
+                alert("Please enter a token.");
+                return;
+            }
+
+            // Close any existing EventSource connection
+            if (source) {
+                source.close();
+            }
+
+            // Initialize a new EventSource connection with the entered token
+            source = new EventSource(`/events?token=${token}`);
+
+            // Set up the event listeners
+            source.onmessage = function(event) {
+                console.log("Got:", event.data);
+            };
+            source.addEventListener("NewChat", function(event) {
+                console.log("NewChat:", event.data);
+            });
+            source.addEventListener("UpdateChatName", function(event) {
+                console.log("UpdateChatName:", event.data);
+            });
+            source.addEventListener("AddToChat", function(event) {
+                console.log("AddToChat:", event.data);
+            });
+            source.addEventListener("RemoveFromChat", function(event) {
+                console.log("RemoveFromChat:", event.data);
+            });
+            source.addEventListener("NewMessage", function(event) {
+                console.log("NewMessage:", event.data);
+            });
+        }
+    </script>
+</body>
+</html>

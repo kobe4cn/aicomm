@@ -1,0 +1,44 @@
+[package]
+name = "chat_server"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html\
+[features]
+default = []
+test-util = ["http-body-util"]
+
+[dependencies]
+tokio = { workspace = true }
+thiserror = { workspace = true }
+axum = { workspace = true }
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing = { workspace = true }
+chrono = { workspace = true }
+sqlx = { workspace = true }
+argon2 = { version = "0.5.3", features = ["std"] }
+jwt-simple = { workspace = true }
+serde_json = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+uuid = { version = "1.10.0", features = ["v8", "serde"] }
+axum-extra = { version = "0.10.1", features = ["typed-header"] }
+sha1 = "0.10.6"
+hex = "0.4.3"
+futures-util = { version = "0.3.31", features = ["tokio-io"] }
+mime_guess = "2.0.5"
+core_lib = { workspace = true }
+http-body-util = { version = "0.1.2", optional = true }
+utoipa = { version = "5.3.1", features = ["axum_extras", "chrono"] }
+utoipa-swagger-ui = { version = "9.0.1", features = ["axum"] }
+utoipa-redoc = { version = "6.0.0", features = ["axum"] }
+utoipa-rapidoc = { version = "6.0.0", features = ["axum"] }
+utoipa-axum = "0.2.0"
+utoipa-scalar = { version = "0.3.0", features = ["axum"] }
+sqlx-db-tester = "0.5.0"
+ai_sdk = { version = "0.1.0", path = "../ai_sdk" }
+time = { workspace = true }

@@ -1,0 +1,315 @@
+### chat
+POST  http://localhost:6688/
+
+
+###  signup user
+POST  http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "kevin yang",
+  "email": "kevin.yang.xgz@gmail.com",
+  "password": "test123456"
+}
+###  signup user
+POST  http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "kevin yang",
+  "email": "kevin.yang@lianwei.com.cn",
+  "password": "test123456"
+}
+
+###  signup user
+POST  http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "yanglei",
+  "email": "yanglei@gmail.com",
+  "password": "test123456"
+}
+
+###  signup user
+POST  http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "yanglei1",
+  "email": "yanglei1@gmail.com",
+  "password": "test123456"
+}
+###  signup user
+POST  http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "yanglei4",
+  "email": "yanglei4@gmail.com",
+  "password": "test123456"
+}
+###  signup user
+POST  http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "yanglei5",
+  "email": "yanglei5@gmail.com",
+  "password": "test123456"
+}
+###  signup user
+POST  http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "leilei",
+  "email": "leilei@gmail.com",
+  "password": "test123456"
+}
+
+### signin user
+# @name signin
+POST  http://localhost:6688/api/signin
+Content-Type: application/json
+
+{
+  "email": "kevin.yang@lianwei.com.cn",
+  "password": "test123456"
+}
+
+
+### signin user
+# @name signin
+POST  http://localhost:6688/api/signin
+Content-Type: application/json
+
+{
+  "email": "kevin.yang.xgz@gmail.com",
+  "password": "test123456"
+}
+@token={{signin.response.body.token}}
+
+
+### get chat list
+GET  http://localhost:6688/api/chats
+Authorization: Bearer {{token}}
+
+### create chat
+POST  http://localhost:6688/api/chats
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "test chat1",
+  "members": [1,2],
+  "public": false
+}
+### create chat
+POST  http://localhost:6688/api/chats
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "test chat3",
+  "members": [1,2],
+  "public": false
+}
+
+### delete chat 3
+DELETE  http://localhost:6688/api/chats/3
+Authorization: Bearer {{token}}
+
+### update chat
+PATCH   http://localhost:6688/api/chats/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "public chat",
+  "members": [1,2,6],
+  "public": true
+}
+
+### get chat
+GET  http://localhost:6688/api/chats/2
+Authorization : Bearer {{ token }}
+
+
+
+### get  user list
+GET  http://localhost:6688/api/users
+Authorization: Bearer {{token}}
+
+
+### upload files
+POST  http://localhost:6688/api/upload
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=MfnBoundary
+
+--MfnBoundary
+Content-Disposition: form-data;filename="actor.jpg"
+Content-Type: application/octet-stream
+
+< /Users/kevin/Downloads/actor.jpg
+--MfnBoundary
+Content-Disposition: form-data;filename="hello.txt"
+
+Hello,World!
+--MfnBoundary--
+
+
+### get files
+GET  http://localhost:6688/api/files/1/0fd/a3e/ed0040e14b47bec49a71f08097b325950d.jpg
+Authorization : Bearer {{ token }}
+
+
+###send a message
+POST  http://localhost:6688/api/chats/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content": "hello,lei yang",
+  "files": []
+}
+
+
+
+GET  http://localhost:6688/api/chats/2/messages?page_size=1
+Authorization : Bearer {{ token }}
+
+### get messages
+GET http://localhost:6688/api/chats/2/messages
+Authorization : Bearer {{ token }}
+
+
+### create agent
+POST  http://localhost:6688/api/chats/2/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "translator2",
+  "type": "proxy",
+  "prompt": "You're the world's best translator,You understand English and Chinese well, also their culture and history.\nIf the original text is English, you will translate it to elegant, authentic Simplified Chinese.\nIf the original text is Chinese, you will translate it to elegant, authentic English.\nOnly return the translated sentences, no other text or comments. belows are the text to translate:\n",
+  "args": {
+    "model": "gpt-4o"
+  },
+  "adapter": "ollama",
+  "model": "llama4"
+}
+
+
+### update agent
+PATCH  http://localhost:6688/api/chats/2/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": 6,
+  "prompt": "You're the world's best translator,You understand English and Chinese well, also their culture and history.
+  If the original text is English, you will translate it to elegant, authentic Simplified Chinese.
+  If the original text is Chinese, you will translate it to elegant, authentic English.
+  Only return the translated sentences, no other text or comments. belows are the text to translate:",
+  "args": {
+    "model": "gpt-4o"
+  }
+}
+
+
+### list chat agents
+GET  http://localhost:6688/api/chats/2/agents
+Authorization: Bearer {{token}}
+
+
+
+###send chinese message
+POST  http://localhost:6688/api/chats/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content": "你好，今天工作辛苦了",
+  "files": []
+}
+
+
+###send english message
+POST  http://localhost:6688/api/chats/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content": "Well great, you made great progress today",
+  "files": []
+}
+
+
+###  create bot
+POST  http://localhost:6688/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "bot",
+  "email": "bot@bot.com",
+  "password": "test123456"
+}
+
+### create chat with bot
+POST  http://localhost:6688/api/chats
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "bot chat",
+  "members": [1,8],
+  "public": false
+}
+
+
+
+### create agent
+POST  http://localhost:6688/api/chats/4/agents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "bot agent",
+  "type": "reply",
+  "prompt": "You will answer all questions in Chinese.",
+  "args": {
+    "model": "gpt-4o"
+  },
+  "adapter": "ollama",
+  "model": "llama4"
+}
+
+
+### send an event
+POST http://localhost:6690/api/event
+Authorization: Bearer {{token}}
+Content-Type: application/x-protobuf
+X-Country: China
+X-Region: GuangDong
+X-City: Guangzhou
+
+< ./fixtures/event.bin
+
+
+### send an event
+curl -X POST http://localhost:6690/api/event \
+-H "Authorization: Bearer {{token}}" \
+-H "Content-Type: application/x-protobuf" \
+-H "X-Country: China" \
+-H "X-Region: GuangDong" \
+-H "X-City: Guangzhou" \
+--data-binary @fixtures/event.bin

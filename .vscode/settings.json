@@ -1,0 +1,26 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "localhost",
+            "database": "chat",
+            "username": "postgres"
+        },
+        {
+            "server": "http://localhost",
+            "port": 8123,
+            "database": "default",
+            "useJWT": false,
+            "requestTimeout": 30000,
+            "enableTls": false,
+            "previewLimit": 50,
+            "password": "clickhouse",
+            "username": "clickhouse",
+            "driver": "ClickHouse",
+            "name": "clickhouse"
+        }
+    ]
+}

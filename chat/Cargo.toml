@@ -1,0 +1,60 @@
+[workspace]
+
+members = [
+    "ai_sdk",
+    "analytics_server",
+    "bot_server",
+    "chat_server",
+    "core_lib",
+    "notify_server",
+    "swiftide_pgvector",
+]
+resolver = "2"
+
+[workspace.dependencies]
+time = "0.3.41"
+tokio = { version = "1.37.0", features = ["rt", "rt-multi-thread", "macros"] }
+
+thiserror = "2.0.11"
+axum = { version = "0.8.1", features = [
+    "http2",
+    "multipart",
+    "query",
+    "tracing",
+    "macros",
+
+] }
+anyhow = "1.0.89"
+serde = { version = "1.0.210", features = ["derive"] }
+serde_yaml = "0.9.34"
+serde_json = "1.0.128"
+tracing-subscriber = { version = "0.3.18", features = [
+    "env-filter",
+    "time",
+    "local-time",
+] }
+tracing = "0.1.40"
+sqlx = { version = "0.8.6", features = ["postgres", "tls-rustls", "chrono"] }
+ring = { version = "0.17.14", package = "ring", features = [
+], default-features = false }
+chrono = { version = "0.4.38", features = ["serde"] }
+core_lib = { path = "./core_lib" }
+chat_server = { path = "./chat_server" }
+notify_server = { path = "./notify_server" }
+swiftide_pgvector = { path = "./swiftide_pgvector" }
+chat_test = { path = "./chat_test" }
+jwt-simple = { version = "0.12.10", default-features = false,features = ["pure-rust"] }
+axum-extra = { version = "0.10.0", features = ["typed-header"] }
+tower = "0.5.1"
+tower-http = { version = "0.6.1", features = [
+    "compression-full",
+    "cors",
+    "trace",
+    "fs",
+] }
+reqwest = { version = "0.12.8", default-features = false, features = [
+  "rustls-tls",
+  "json",
+  "multipart",
+  "stream",
+] }

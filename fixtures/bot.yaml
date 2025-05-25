@@ -1,0 +1,5 @@
+server:
+  port: 6688
+  host: 0.0.0.0
+  db_url: postgres://postgres:postgres@10.89.0.2:5432/chat
+  base_dir: /tmp/bot_server

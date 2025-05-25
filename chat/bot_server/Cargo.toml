@@ -1,0 +1,36 @@
+[package]
+name = "bot_server"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[[bin]]
+name = "bot_server"
+path = "src/server.rs"
+
+
+[dependencies]
+tokio = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing = { workspace = true }
+tokio-stream = { version = "0.1.17", features = ["sync"] }
+futures = "0.3.31"
+rand = "0.9.1"
+sqlx = { workspace = true }
+core_lib = { workspace = true }
+jwt-simple = { workspace = true }
+dashmap = "6.1.0"
+serde_json = { workspace = true }
+swiftide = { version = "0.26.0", features = [
+    "pgvector",
+    "swiftide-agents",
+    "openai",
+    "tree-sitter",
+] }
+swiftide_pgvector = { workspace = true }
+time = { workspace = true }
+reqwest = { workspace = true}

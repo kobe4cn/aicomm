@@ -1,0 +1,130 @@
+syntax = "proto3";
+package analytics;
+
+///用户事件
+message AnalyticsEvent{
+    EventContext context=1;
+
+    oneof event_type{
+        AppStartEvent app_start=8;
+        AppExitEvent app_exit=9;
+        UserLoginEvent user_login=10;
+        UserLogoutEvent user_logout=11;
+        UserRegisterEvent user_register=12;
+        MessageSentEvent message_sent=13;
+        ChatCreatedEvent chat_created=14;
+        ChatJoinedEvent chat_joined=15;
+        ChatLeftEvent chat_left=16;
+        NavigationEvent navigation=17;
+    }
+}
+///应用启动事件
+message AppStartEvent{
+
+}
+
+///应用退出事件
+message AppExitEvent{
+    enum ExitCode{
+        EXIT_CODE_UNKNOWN=0;
+        EXIT_CODE_SUCCESS=1;
+        EXIT_CODE_FAILURE=2;
+    }
+    ExitCode exit_code=1;
+}
+
+///用户登录事件
+message UserLoginEvent{
+    ///用户邮箱（Email PII，需要脱敏）
+    string email=1;
+}
+
+///用户登出事件
+message UserLogoutEvent{
+    ///用户邮箱（Email PII，需要脱敏）
+    string email=1;
+}
+
+///用户注册事件
+message UserRegisterEvent{
+    ///用户邮箱（Email PII，需要脱敏）
+    string email=1;
+
+    string workspace_id=2;
+}
+
+///chat 创建事件
+message ChatCreatedEvent{
+    string workspace_id=1;
+}
+
+///消息发送事件
+message MessageSentEvent{
+    string chat_id=1;
+    string type=2;
+    int32 size=3;
+    int32 total_files=4;
+}
+
+///chat 加入事件
+message ChatJoinedEvent{
+    string chat_id=1;
+}
+
+///chat 离开事件
+message ChatLeftEvent{
+    string chat_id=1;
+}
+
+///导航事件
+message NavigationEvent{
+    string from=1;
+    string to=2;
+}
+
+
+
+
+
+
+
+
+message EventContext{
+    //客户端ID
+    string client_id=1;
+    //应用版本
+    string app_version=2;
+    //系统信息
+    SystemInfo system=3;
+    //用户ID
+    string user_id=4;
+    //IP地址
+    string ip_address=5;
+    //用户代理
+    string user_agent=6;
+    //来源
+    string referer=7;
+    //地理位置
+    GeoLocation geo=8;
+    //客户端时间戳
+    int64 client_ts=9;
+    //服务器时间戳
+    int64 server_ts=10;
+}
+
+message SystemInfo{
+    //操作系统
+    string os=1;
+    //架构
+    string arch=2;
+    //语言
+    string language=3;
+    //时区
+    string timezone=4;
+}
+
+message GeoLocation{
+    string country=1;
+    string region=2;
+    string city=3;
+}

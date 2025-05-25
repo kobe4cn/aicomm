@@ -1,0 +1,54 @@
+[package]
+name = "analytics_server"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[dependencies]
+anyhow.workspace = true
+axum = { workspace = true }
+clickhouse = { version = "0.13.2", features = ["rustls-tls", "time"] }
+core_lib.workspace = true
+prost = "0.13.5"
+
+prost-types = "0.13.5"
+serde = { workspace = true }
+serde_yaml.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true }
+tower-http = { workspace = true, features = [
+    "compression-full",
+    "cors",
+    "trace",
+    "fs",
+] }
+tracing.workspace = true
+tracing-subscriber = { workspace = true }
+utoipa = { version = "5.3.1", features = ["axum_extras", "chrono"] }
+utoipa-swagger-ui = { version = "9.0.1", features = ["axum"] }
+utoipa-redoc = { version = "6.0.0", features = ["axum"] }
+utoipa-rapidoc = { version = "6.0.0", features = ["axum"] }
+utoipa-axum = "0.2.0"
+utoipa-scalar = { version = "0.3.0", features = ["axum"] }
+jwt-simple.workspace = true
+async-trait = "0.1.88"
+axum-extra = { workspace = true, features = ["protobuf"] }
+chrono = { workspace = true, features = ["serde"] }
+reqwest = { workspace = true }
+serde_repr = "0.1.20"
+time = { workspace = true }
+[build-dependencies]
+anyhow.workspace = true
+prost-build = "0.13.5"
+proto-builder-trait = { version = "0.6.2", features = [
+    "prost",
+], default-features = false }
+
+[dev-dependencies]
+axum-test = "17.3.0"
+clickhouse = { version = "0.13.2", features = [
+    "test-util",
+    "rustls-tls",
+    "time",
+] }
+reqwest = { workspace = true }

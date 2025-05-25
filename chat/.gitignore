@@ -1,0 +1,4 @@
+/target
+*.excalidraw
+/chat_server/target
+/volumes
