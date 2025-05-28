@@ -30,9 +30,10 @@ pub async fn setup_pg_listener(config: &AppConfig) -> anyhow::Result<()> {
     listener.listen("chat_message_created").await?;
     let mut stream = listener.into_stream();
 
-    let vector_store = VectorStore::try_new("code_table", METADATA_QA_CODE_NAME)
-        .await
-        .map_err(|e| anyhow::anyhow!("failed to create vector store: {}", e))?;
+    let vector_store =
+        VectorStore::try_new("code_table", METADATA_QA_CODE_NAME, &config.server.db_url)
+            .await
+            .map_err(|e| anyhow::anyhow!("failed to create vector store: {}", e))?;
 
     // let pgvector = vector_store.vector_store.clone();
     // let pool = pgvector.get_pool().await?;

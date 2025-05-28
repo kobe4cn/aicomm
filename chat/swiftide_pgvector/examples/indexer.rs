@@ -14,7 +14,8 @@ use tracing_subscriber::{Layer as _, fmt::Layer, layer::SubscriberExt, util::Sub
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let layer = Layer::new().pretty().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry().with(layer).init();
-    let vector_store = VectorStore::try_new("rag_table", METADATA_QA_TEXT_NAME).await?;
+    let vector_store =
+        VectorStore::try_new("rag_table", METADATA_QA_TEXT_NAME, "localhost").await?;
 
     let llm_client = integrations::openai::OpenAI::builder()
         .default_embed_model("text-embedding-3-small")

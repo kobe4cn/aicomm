@@ -1,0 +1,160 @@
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bot-server
+  namespace: chat-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bot-server
+  template:
+    metadata:
+      labels:
+        app: bot-server
+    spec:
+      containers:
+        - name: bot-server
+          image: docker.io/kobe4cn/bot_server:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/app/bot_server"]
+          ports:
+            - containerPort: 6689
+          env:
+            - name: OPENAI_API_KEY
+              value: $(OPENAI_API_KEY)
+          volumeMounts:
+            - name: config
+              mountPath: /app/bot.yaml
+              readOnly: true
+              subPath: bot.yaml
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+      volumes:
+        - name: config
+          configMap:
+            name: bot-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-server
+  namespace: chat-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat-server
+  template:
+    metadata:
+      labels:
+        app: chat-server
+    spec:
+      containers:
+        - name: chat-server
+          image: docker.io/kobe4cn/chat_server:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/app/chat_server"]
+          ports:
+            - containerPort: 6688
+          env:
+            - name: OPENAI_API_KEY
+              value: $(OPENAI_API_KEY)
+          volumeMounts:
+            - name: config
+              mountPath: /app/app.yaml
+              readOnly: true
+              subPath: app.yaml
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+      volumes:
+        - name: config
+          configMap:
+            name: chat-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notify-server
+  namespace: chat-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notify-server
+  template:
+    metadata:
+      labels:
+        app: notify-server
+    spec:
+      containers:
+        - name: notify-server
+          image: docker.io/kobe4cn/notify_server:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/app/notify_server"]
+          ports:
+            - containerPort: 6687
+          volumeMounts:
+            - name: config
+              mountPath: /app/notify.yaml
+              subPath: notify.yaml
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+      volumes:
+        - name: config
+          configMap:
+            name: notify-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics-server
+  namespace: chat-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analytics-server
+  template:
+    metadata:
+      labels:
+        app: analytics-server
+    spec:
+      containers:
+        - name: analytics-server
+          image: docker.io/kobe4cn/analytics_server:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/app/analytics_server"]
+          ports:
+            - containerPort: 6690
+          volumeMounts:
+            - name: config
+              mountPath: /app/analytics.yaml
+              subPath: analytics.yaml
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+      volumes:
+        - name: config
+          configMap:
+            name: analytics-config

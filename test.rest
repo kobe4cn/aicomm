@@ -313,3 +313,37 @@ curl -X POST http://localhost:6690/api/event \
 -H "X-Region: GuangDong" \
 -H "X-City: Guangzhou" \
 --data-binary @fixtures/event.bin
+
+
+### signin user
+# @name signin
+POST  http://localhost:64538/api/signin
+Content-Type: application/json
+
+{
+  "email": "kevin.yang.xgz@gmail.com",
+  "password": "test123456"
+}
+@token={{signin.response.body.token}}
+
+###  signup user
+POST  http://alb-wdzl09aiwaxx5d3xz7.cn-hongkong.alb.aliyuncsslbintl.com/api/signup
+Content-Type: application/json
+
+{
+  "workspace": "test_workspace",
+  "fullname": "kevin yang",
+  "email": "kevin.yang.xgz@gmail.com",
+  "password": "test123456"
+}
+
+### signin user
+# @name signin
+POST  http://alb-wdzl09aiwaxx5d3xz7.cn-hongkong.alb.aliyuncsslbintl.com/api/signin
+Content-Type: application/json
+
+{
+  "email": "kevin.yang.xgz@gmail.com",
+  "password": "test123456"
+}
+@token={{signin.response.body.token}}

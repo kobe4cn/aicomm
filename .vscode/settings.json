@@ -21,6 +21,32 @@
             "username": "clickhouse",
             "driver": "ClickHouse",
             "name": "clickhouse"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 65218,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "test",
+            "database": "chat",
+            "username": "postgres"
+        },
+        {
+            "server": "http://localhost",
+            "port": 55094,
+            "database": "default",
+            "useJWT": false,
+            "requestTimeout": 30000,
+            "enableTls": false,
+            "previewLimit": 50,
+            "username": "clickhouse",
+            "driver": "ClickHouse",
+            "name": "test",
+            "askForPassword": true
         }
-    ]
+    ],
+    "yaml.schemas": {
+        "kubernetes://schema/v1%40service": "file:///Users/kevin/Documents/develop/rust_bootcamp/aicomm/k8s/deployment.yaml"
+    }
 }

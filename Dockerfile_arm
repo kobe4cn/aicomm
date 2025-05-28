@@ -1,10 +1,10 @@
 # multi-stage build
 
-FROM ghcr.io/rust-cross/rust-musl-cross:aarch64-musl as builder
+# Build for ARM64
+FROM --platform=linux/arm64 ghcr.io/rust-cross/rust-musl-cross:aarch64-musl AS builder
 ENV SQLX_OFFLINE=true
 
 WORKDIR /app
-
 
 # 安装必要的依赖
 RUN apt-get update && apt-get install -y \
@@ -31,6 +31,7 @@ RUN wget https://www.openssl.org/source/openssl-3.0.8.tar.gz \
     && cp -a libcrypto.a libssl.a /usr/local/musl/aarch64-unknown-linux-musl/lib/ \
     && cd .. \
     && rm -rf openssl-3.0.8.tar.gz openssl-3.0.8
+
 #build the code
 ENV CARGO_BUILD_JOBS=1
 ENV PKG_CONFIG_ALLOW_CROSS=1 \
@@ -38,16 +39,16 @@ ENV PKG_CONFIG_ALLOW_CROSS=1 \
     OPENSSL_LIB_DIR=/usr/local/musl/aarch64-unknown-linux-musl/lib \
     OPENSSL_INCLUDE_DIR=/usr/local/musl/aarch64-unknown-linux-musl/include \
     PKG_CONFIG_PATH=/usr/local/musl/aarch64-unknown-linux-musl/lib/pkgconfig
-ENV ORT_LIB_LOCATION=/app/onnxruntime-aarch64-musl
-RUN cd chat && cargo build --release --target aarch64-unknown-linux-musl
-RUN ls  /app/chat/target/aarch64-unknown-linux-musl/release
 
+RUN cd chat && cargo build --release --target aarch64-unknown-linux-musl
+RUN ls /app/chat/target/aarch64-unknown-linux-musl/release
 
 #build the image
-FROM alpine:3.20
+FROM --platform=linux/arm64 alpine:3.18 AS runtime
 WORKDIR /app
 ARG APP_NAME
 ARG APP_PORT
+
 # Create a non-root user and group
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
@@ -58,8 +59,6 @@ RUN chmod +x /app/${APP_NAME} && \
 
 # Switch to non-root user
 USER appuser
-
-
 
 ENTRYPOINT /app/${APP_NAME}
 EXPOSE ${APP_PORT}

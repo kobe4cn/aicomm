@@ -1,0 +1,78 @@
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bot-config
+  namespace: chat-app
+data:
+  bot.yaml: |
+    server:
+      port: 6689
+      host: 0.0.0.0
+      db_url: postgres://postgres:postgres@postgres:5432/chat
+      base_dir: /tmp/bot_server
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chat-config
+  namespace: chat-app
+data:
+  app.yaml: |
+    server:
+      port: 6688
+      host: 0.0.0.0
+      db_url: postgres://postgres:postgres@postgres:5432/chat
+      base_dir: /tmp/chat_server
+    auth:
+      sk: |
+        -----BEGIN PRIVATE KEY-----
+        MC4CAQAwBQYDK2VwBCIEIA4mh6ctXYftfwRb4je+XyO+D47YNI6ytsmAPpQFq+rt
+        -----END PRIVATE KEY-----
+      pk: |
+        -----BEGIN PUBLIC KEY-----
+        MCowBQYDK2VwAyEAXb0Hfuxwr6GN5eMHesm5LmYGATOArNiN7JYQOiDhVag=
+        -----END PUBLIC KEY-----
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: analytics-config
+  namespace: chat-app
+data:
+  analytics.yaml: |
+    server:
+      port: 6690
+      host: 0.0.0.0
+      db_url: http://clickhouse:8123
+      db_name: default
+      user: clickhouse
+      password: clickhouse
+      base_dir: /tmp/analytics_server
+    auth:
+      sk: |
+        -----BEGIN PRIVATE KEY-----
+        MC4CAQAwBQYDK2VwBCIEIA4mh6ctXYftfwRb4je+XyO+D47YNI6ytsmAPpQFq+rt
+        -----END PRIVATE KEY-----
+      pk: |
+        -----BEGIN PUBLIC KEY-----
+        MCowBQYDK2VwAyEAXb0Hfuxwr6GN5eMHesm5LmYGATOArNiN7JYQOiDhVag=
+        -----END PUBLIC KEY-----
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notify-config
+  namespace: chat-app
+data:
+  notify.yaml: |
+    server:
+      port: 6687
+      host: 0.0.0.0
+      db_url: postgres://postgres:postgres@postgres:5432/chat
+      base_dir: /tmp/notify_server
+    auth:
+      pk: |
+        -----BEGIN PUBLIC KEY-----
+        MCowBQYDK2VwAyEAXb0Hfuxwr6GN5eMHesm5LmYGATOArNiN7JYQOiDhVag=
+        -----END PUBLIC KEY-----
