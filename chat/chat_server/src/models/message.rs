@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
-use tracing::warn;
+use tracing::{info, warn};
 use utoipa::IntoParams;
 
 use crate::{agent::AgentVariant, AppError, AppState};
@@ -54,6 +54,7 @@ impl AppState {
         }
         //get the agent and process the message
         let mut agents = self.list_agents(chat_id, user_id).await?;
+        info!("agents: {:?}", agents);
         let decision = if let Some(agent) = agents.pop() {
             let agent: AgentVariant = agent.into();
             agent

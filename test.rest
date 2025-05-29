@@ -226,7 +226,7 @@ Content-Type: application/json
 
 
 ### list chat agents
-GET  http://localhost:6688/api/chats/2/agents
+GET  http://localhost:6688/api/chats/3/agents
 Authorization: Bearer {{token}}
 
 
@@ -278,7 +278,7 @@ Content-Type: application/json
 
 
 ### create agent
-POST  http://localhost:6688/api/chats/4/agents
+POST  http://localhost:6688/api/chats/3/agents
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -289,8 +289,8 @@ Content-Type: application/json
   "args": {
     "model": "gpt-4o"
   },
-  "adapter": "ollama",
-  "model": "llama4"
+  "adapter": "openai",
+  "model": "gpt-4o"
 }
 
 

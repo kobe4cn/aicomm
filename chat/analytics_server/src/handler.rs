@@ -29,6 +29,7 @@ pub(crate) async fn create_event_handler(
 ) -> Result<impl IntoResponse, AppError> {
     let client = state.client.clone();
     let mut row = AnalyticsEventRow::try_from(event)?;
+    row.set_session_id(&state).await?;
     if let Some(country) = headers.get("X-Country") {
         if let Ok(country_str) = country.to_str() {
             row.geo_country = Some(country_str.to_string());

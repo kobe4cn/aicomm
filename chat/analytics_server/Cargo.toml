@@ -37,6 +37,8 @@ chrono = { workspace = true, features = ["serde"] }
 reqwest = { workspace = true }
 serde_repr = "0.1.20"
 time = { workspace = true }
+dashmap = { workspace = true }
+uuid = { workspace = true }
 [build-dependencies]
 anyhow.workspace = true
 prost-build = "0.13.5"

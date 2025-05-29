@@ -1,6 +1,7 @@
 CREATE TABLE analytics_events (
     -- EventContext
     client_id String,
+    session_id String,
     app_version String,
     system_os String,
     system_arch String,
@@ -55,4 +56,4 @@ CREATE TABLE analytics_events (
     navigation_from Nullable(String),
     navigation_to Nullable(String)
 ) ENGINE = MergeTree
-ORDER BY (server_ts, client_id);
+ORDER BY (event_type, session_id, client_id, server_ts);

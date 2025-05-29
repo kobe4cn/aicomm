@@ -15,9 +15,9 @@ impl VectorStore {
         metadata: &str,
         db_url: &str,
     ) -> Result<Self, Box<dyn std::error::Error>> {
-        let url = format!("postgresql://postgres:postgres@{}:5432/chat", db_url);
+        // let url = format!("postgresql://postgres:postgres@{}:5432/chat", db_url);
         let pgv_storage = PgVector::builder()
-            .db_url(url)
+            .db_url(db_url)
             .vector_size(1536)
             .with_vector(EmbeddedField::Combined)
             .with_metadata(metadata)

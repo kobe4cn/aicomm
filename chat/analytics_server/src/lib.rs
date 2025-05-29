@@ -11,6 +11,7 @@ use clickhouse::Client;
 pub use config::*;
 use core::fmt;
 use core_lib::{DecodingKey, EncodingKey, TokenVerify, User, set_layer, verify_token};
+use dashmap::DashMap;
 pub use error::*;
 use handler::create_event_handler;
 use openapi::OpenApiRouter;
@@ -29,6 +30,7 @@ pub struct AppStateInner {
     pub(crate) dk: DecodingKey,
     pub(crate) ek: EncodingKey,
     pub(crate) client: clickhouse::Client,
+    pub(crate) sessions: Arc<DashMap<String, (String, i64)>>,
 }
 
 impl fmt::Debug for AppStateInner {
@@ -87,12 +89,14 @@ impl AppState {
             .with_password(&config.server.password);
         let dk = DecodingKey::load(&config.auth.pk).context("load dk failed")?;
         let ek = EncodingKey::load(&config.auth.sk).context("load ek failed")?;
+        let sessions = Arc::new(DashMap::new());
         Ok(Self {
             inner: Arc::new(AppStateInner {
                 config,
                 dk,
                 ek,
                 client,
+                sessions,
             }),
         })
     }

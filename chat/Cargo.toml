@@ -34,7 +34,12 @@ tracing-subscriber = { version = "0.3.18", features = [
     "local-time",
 ] }
 tracing = "0.1.40"
-sqlx = { version = "0.8.6", features = ["postgres", "tls-rustls", "chrono"] }
+sqlx = { version = "0.8.6", features = [
+    "postgres",
+    "tls-rustls",
+    "chrono",
+    "runtime-tokio",
+] }
 ring = { version = "0.17.14", package = "ring", features = [
 ], default-features = false }
 chrono = { version = "0.4.38", features = ["serde"] }
@@ -43,7 +48,9 @@ chat_server = { path = "./chat_server" }
 notify_server = { path = "./notify_server" }
 swiftide_pgvector = { path = "./swiftide_pgvector" }
 chat_test = { path = "./chat_test" }
-jwt-simple = { version = "0.12.10", default-features = false,features = ["pure-rust"] }
+jwt-simple = { version = "0.12.10", default-features = false, features = [
+    "pure-rust",
+] }
 axum-extra = { version = "0.10.0", features = ["typed-header"] }
 tower = "0.5.1"
 tower-http = { version = "0.6.1", features = [
@@ -53,8 +60,10 @@ tower-http = { version = "0.6.1", features = [
     "fs",
 ] }
 reqwest = { version = "0.12.8", default-features = false, features = [
-  "rustls-tls",
-  "json",
-  "multipart",
-  "stream",
+    "rustls-tls",
+    "json",
+    "multipart",
+    "stream",
 ] }
+dashmap = "6.1.0"
+uuid = { version = "1.15.0", features = ["v7"] }

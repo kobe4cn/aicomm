@@ -88,6 +88,7 @@ dependencies = [
  "chrono",
  "clickhouse",
  "core_lib",
+ "dashmap",
  "jwt-simple",
  "prost",
  "prost-build",
@@ -109,6 +110,7 @@ dependencies = [
  "utoipa-redoc",
  "utoipa-scalar",
  "utoipa-swagger-ui",
+ "uuid",
 ]
 
 [[package]]
