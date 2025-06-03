@@ -48,5 +48,7 @@
     ],
     "yaml.schemas": {
         "kubernetes://schema/v1%40service": "file:///Users/kevin/Documents/develop/rust_bootcamp/aicomm/k8s/deployment.yaml"
-    }
+    },
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": false
 }
