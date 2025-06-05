@@ -1,4 +1,4 @@
-use crate::{AppError, AppState, events::AnalyticsEventRow, pb::AnalyticsEvent};
+use crate::{AppError, AppState, events::AnalyticsEventRow};
 
 use axum::{
     extract::State,
@@ -6,7 +6,7 @@ use axum::{
     response::IntoResponse,
 };
 use axum_extra::protobuf::Protobuf;
-use core_lib::User;
+use core_lib::{AnalyticsEvent, User};
 
 #[utoipa::path(
     post,
@@ -66,7 +66,7 @@ mod tests {
     use prost::Message;
     use reqwest::Client;
 
-    use crate::pb::{
+    use core_lib::{
         AppExitEvent, EventContext, GeoLocation, SystemInfo, analytics_event::EventType,
     };
 

@@ -1,12 +1,9 @@
 use std::fs;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use analytics_server::{
-    AppError,
-    pb::{
-        AnalyticsEvent, AppExitEvent, EventContext, GeoLocation, SystemInfo,
-        analytics_event::EventType,
-    },
+use analytics_server::AppError;
+use core_lib::{
+    AnalyticsEvent, AppExitEvent, EventContext, GeoLocation, SystemInfo, analytics_event::EventType,
 };
 use prost::Message;
 

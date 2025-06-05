@@ -6,7 +6,7 @@ members = [
     "bot_server",
     "chat_server",
     "core_lib",
-    "notify_server",
+    "notify_server", "simulator",
     "swiftide_pgvector",
 ]
 resolver = "2"

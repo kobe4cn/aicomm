@@ -3,8 +3,6 @@ name = "core_lib"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-
-
 [dependencies]
 chrono = { workspace = true }
 serde = { workspace = true }
@@ -22,3 +20,14 @@ uuid = { version = "1.16.0", features = ["v8", "serde"] }
 utoipa = { version = "5.3.1", features = ["axum_extras", "chrono"] }
 serde_json.workspace = true
 thiserror = { workspace = true }
+prost = "0.13.5"
+prost-types = "0.13.5"
+clickhouse = { version = "0.13.2", features = ["rustls-tls", "time"] }
+serde_repr = "0.1.20"
+reqwest = { workspace = true }
+[build-dependencies]
+anyhow.workspace = true
+prost-build = "0.13.5"
+proto-builder-trait = { version = "0.6.2", features = [
+    "prost",
+], default-features = false }

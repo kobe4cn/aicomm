@@ -4,15 +4,58 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use utoipa::ToSchema;
 
-use crate::{
-    AppError, AppState,
-    pb::{
-        AnalyticsEvent, AppExitEvent, AppStartEvent, ChatCreatedEvent, ChatJoinedEvent,
-        ChatLeftEvent, EventContext, MessageSentEvent, NavigationEvent, UserLoginEvent,
-        UserLogoutEvent, UserRegisterEvent, analytics_event::EventType,
-    },
+use crate::{AppState, error::AppError};
+use core_lib::{
+    AnalyticsEvent, AppExitEvent, AppStartEvent, ChatCreatedEvent, ChatJoinedEvent, ChatLeftEvent,
+    EventContext, MessageSentEvent, NavigationEvent, UserLoginEvent, UserLogoutEvent,
+    UserRegisterEvent, analytics_event::EventType,
 };
 const SESSION_TIMEOUT: i64 = 60 * 10 * 1000;
+impl AnalyticsEventRow {
+    pub async fn set_session_id(&mut self, state: &AppState) -> Result<(), AppError> {
+        if let Some(mut ref_data) = state.sessions.get_mut(&self.client_id) {
+            let (session_id, last_ts) = ref_data.value_mut();
+            let duration = self.server_ts - *last_ts;
+            if duration > SESSION_TIMEOUT {
+                let new_session_id = uuid::Uuid::now_v7().to_string();
+                *session_id = new_session_id.clone();
+                *last_ts = self.server_ts;
+                self.session_id = new_session_id;
+                self.duration = duration as u32;
+            } else {
+                *last_ts = self.server_ts;
+                self.session_id = session_id.clone();
+                self.duration = duration as u32;
+            }
+        } else {
+            let mut rows = state.client.query("select session_id,server_ts from analytics_events where client_id = ? order by server_ts desc limit 1")
+            .bind(&self.client_id)
+            .fetch::<(String,i64)>()?;
+            if let Some(item) = rows.next().await? {
+                let (session_id, server_ts) = item;
+                let mut session_id = session_id.clone();
+                let duration = self.server_ts - server_ts;
+                if duration > SESSION_TIMEOUT {
+                    session_id = uuid::Uuid::now_v7().to_string();
+                }
+                self.session_id = session_id.to_string();
+                self.duration = duration as u32;
+                state
+                    .sessions
+                    .insert(self.client_id.clone(), (session_id, self.server_ts));
+            } else {
+                let session_id = uuid::Uuid::now_v7().to_string();
+                state
+                    .sessions
+                    .insert(self.client_id.clone(), (session_id.clone(), self.server_ts));
+                self.session_id = session_id;
+                self.duration = 0;
+            }
+        }
+        Ok(())
+    }
+}
+
 #[derive(Row, Serialize, Debug, Deserialize, ToSchema, Default)]
 pub struct AnalyticsEventRow {
     // EventContext
@@ -108,50 +151,6 @@ impl TryFrom<AnalyticsEvent> for AnalyticsEventRow {
             None => return Err(AppError::MissingEventContext),
         }
         Ok(row)
-    }
-}
-impl AnalyticsEventRow {
-    pub async fn set_session_id(&mut self, state: &AppState) -> Result<(), AppError> {
-        if let Some(mut ref_data) = state.sessions.get_mut(&self.client_id) {
-            let (session_id, last_ts) = ref_data.value_mut();
-            let duration = self.server_ts - *last_ts;
-            if duration > SESSION_TIMEOUT {
-                let new_session_id = uuid::Uuid::now_v7().to_string();
-                *session_id = new_session_id.clone();
-                *last_ts = self.server_ts;
-                self.session_id = new_session_id;
-                self.duration = duration as u32;
-            } else {
-                *last_ts = self.server_ts;
-                self.session_id = session_id.clone();
-                self.duration = duration as u32;
-            }
-        } else {
-            let mut rows = state.client.query("select session_id,server_ts from analytics_events where client_id = ? order by server_ts desc limit 1")
-            .bind(&self.client_id)
-            .fetch::<(String,i64)>()?;
-            if let Some(item) = rows.next().await? {
-                let (session_id, server_ts) = item;
-                let mut session_id = session_id.clone();
-                let duration = self.server_ts - server_ts;
-                if duration > SESSION_TIMEOUT {
-                    session_id = uuid::Uuid::now_v7().to_string();
-                }
-                self.session_id = session_id.to_string();
-                self.duration = duration as u32;
-                state
-                    .sessions
-                    .insert(self.client_id.clone(), (session_id, self.server_ts));
-            } else {
-                let session_id = uuid::Uuid::now_v7().to_string();
-                state
-                    .sessions
-                    .insert(self.client_id.clone(), (session_id.clone(), self.server_ts));
-                self.session_id = session_id;
-                self.duration = 0;
-            }
-        }
-        Ok(())
     }
 }
 
