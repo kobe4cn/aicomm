@@ -66,6 +66,7 @@ CREATE TABLE aggregated_sessions (
     date Date,
     client_id String,
     session_id String,
+    
     session_start SimpleAggregateFunction(min, DateTime64(3)),
     session_end SimpleAggregateFunction(max, DateTime64(3)),
     total_events AggregateFunction(count, UInt64),

@@ -11,7 +11,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let vector_store = VectorStore::try_new(
         "code_table",
         METADATA_QA_CODE_NAME,
-        "postgres://postgres:postgres@localhost:52269/chat",
+        "postgresql://postgres:postgres@localhost:5432/chat",
     )
     .await?;
 

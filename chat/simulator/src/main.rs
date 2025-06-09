@@ -15,6 +15,8 @@ use tracing_subscriber::{Layer as _, fmt::Layer, layer::SubscriberExt, util::Sub
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    let events: Vec<SimEventType> = (0..5).map(|_| Faker.fake::<SimEventType>()).collect();
+    info!("events: {:?}", events);
     let fmt_layer = fmt::layer().with_timer(LocalTime::rfc_3339());
     let layer = Layer::new().pretty().with_filter(LevelFilter::INFO);
     tracing_subscriber::registry()
@@ -48,7 +50,10 @@ async fn main() -> Result<()> {
         .to_analytics_events()
         .await?;
         for row in rows {
-            info!("inserting row: {:?}", row);
+            info!(
+                "user: {:?}, session: {:?}, event_type: {:?}",
+                user.user_id, row.session_id, row.event_type
+            );
             insert.write(&row).await?;
         }
     }

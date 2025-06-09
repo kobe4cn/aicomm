@@ -3,19 +3,20 @@ use swiftide::{
     integrations::{self, openai::GenericOpenAI, pgvector::PgVector},
     query::{self, answers, query_transformers, response_transformers},
 };
+
 #[allow(unused)]
 pub struct VectorStore {
     pub vector_store: PgVector,
     // pub embed: Embed,
     pub llm_client: GenericOpenAI,
 }
+
 impl VectorStore {
     pub async fn try_new(
         table_name: &str,
         metadata: &str,
         db_url: &str,
     ) -> Result<Self, Box<dyn std::error::Error>> {
-        // let url = format!("postgresql://postgres:postgres@{}:5432/chat", db_url);
         let pgv_storage = PgVector::builder()
             .db_url(db_url)
             .vector_size(1536)
@@ -28,6 +29,9 @@ impl VectorStore {
             .default_embed_model("text-embedding-3-small")
             .default_prompt_model("gpt-4o")
             .build()?;
+
+        // let embed = Embed::new(openai_client.clone());
+
         Self::new(pgv_storage, openai_client)
     }
     pub fn new(
@@ -48,6 +52,15 @@ pub async fn ask_query(
     vector_store: PgVector,
     questions: Vec<String>,
 ) -> Result<Vec<String>, Box<dyn std::error::Error>> {
+    // By default the search strategy is SimilaritySingleEmbedding
+    // which takes the latest query, embeds it, and does a similarity search
+    //
+    // Pgvector will return an error if multiple embeddings are set
+    //
+    // The pipeline generates subquestions to increase semantic coverage, embeds these in a single
+    // embedding, retrieves the default top_k documents, summarizes them and uses that as context
+    // for the final answer.
+
     let pipeline = query::Pipeline::default()
         .then_transform_query(query_transformers::GenerateSubquestions::from_client(
             llm_client.clone(),
@@ -65,5 +78,6 @@ pub async fn ask_query(
         .iter()
         .map(|result| result.answer().to_string())
         .collect();
+
     Ok(results)
 }

@@ -11,8 +11,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "What is SwiftIDE? Provide a clear, comprehensive summary in under 50 words.".into(),
         "How can I use SwiftIDE to connect with the Ethereum blockchain? Please provide a concise, comprehensive summary in less than 50 words.".into(),
     ];
-    let vector_store =
-        VectorStore::try_new("rag_table", METADATA_QA_TEXT_NAME, "localhost").await?;
+    let vector_store = VectorStore::try_new(
+        "rag_table",
+        METADATA_QA_TEXT_NAME,
+        "postgresql://postgres:postgres@localhost:5432/chat",
+    )
+    .await?;
     ask_query(
         vector_store.llm_client.clone(),
         vector_store.vector_store.clone(),

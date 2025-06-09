@@ -1,6 +1,8 @@
 mod config;
 mod convert;
 mod faker;
+use std::fmt;
+
 use chrono::DateTime;
 use chrono::Utc;
 pub use config::AppConfig;
@@ -76,11 +78,21 @@ pub struct SimEvent {
     pub event: SimEventType,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Dummy)]
 pub enum SimEventType {
     Login(LoginData),
     Navigation(NavigationData),
     Message(MessageData),
+}
+
+impl fmt::Display for SimEventType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            SimEventType::Login(login) => write!(f, "Login({})", login.email),
+            SimEventType::Navigation(navigation) => write!(f, "Navigation({})", navigation.from),
+            SimEventType::Message(message) => write!(f, "Message({})", message.chat_id),
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
